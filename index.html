@@ -1,397 +1,153 @@
-    <!DOCTYPE html>
-    <html lang="en">
-    <meta http-equiv="X-Content-Type-Options" content="nosniff">
-    <meta http-equiv="X-Frame-Options" content="DENY"> 
-    <meta http-equiv="X-XSS-Protection" content="1; mode=block">
-    <head>
-        <meta charset="utf-8" />
-        <meta name="viewport" content="width=device-width, initial-scale=1" />
-        <title>Join Our Community</title>
-        <meta name="description" content="A vibrant community awaits you. Join us to connect, share, and grow together." />
-        <link rel="icon" href="https://i.imgur.com/YZ5t6J8.png" type="image/png" sizes="any" />
-        <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
-        <style>
-            :root {
-                --background-color: #0a0a0a;
-                --accent-gradient: linear-gradient(135deg, #8A2BE2 0%, #FF1493 100%);
-                --primary-color: #8A2BE2;
-                --secondary-color: #FF1493;
-                --text-color: #ffffff;
-                --muted-text-color: #b8b8b8;
-                --button-hover: rgba(255, 255, 255, 0.1);
-                --transition-speed: 0.4s;
-                --box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
-            }
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Exotic's Dark Notes</title>
+    <link href="https://fonts.googleapis.com/css2?family=Caveat&family=Patrick+Hand&display=swap" rel="stylesheet">
+    <style>
+        body {
+            background-color: #111;
+            color: #fff;
+            font-family: 'Caveat', cursive;
+            margin: 0;
+            padding: 20px;
+            min-height: 100vh;
+            position: relative;
+            overflow-x: hidden;
+        }
 
-            * {
-                box-sizing: border-box;
-                margin: 0;
-                padding: 0;
-            }
+        .container {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 20px;
+            padding-bottom: 60px;
+        }
 
-            body {
-                font-family: 'Poppins', sans-serif;
-                background-color: var(--background-color);
-                color: var(--text-color);
-                display: flex;
-                align-items: center;
-                justify-content: center;
-                min-height: 100vh;
-                overflow: hidden;
-                position: relative;
-            }
+        .box {
+            background-color: #1a1a1a;
+            border: 1px solid #333;
+            padding: 20px;
+            min-height: 200px;
+            cursor: pointer;
+            position: relative;
+            background-image: linear-gradient(#252525 1px, transparent 1px);
+            background-size: 100% 1.6em;
+            line-height: 1.6em;
+            white-space: pre-line;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+        }
 
-            #wave-canvas {
-                position: fixed;
-                top: 0;
-                left: 0;
-                width: 100%;
-                height: 100%;
-                z-index: -1;
-                filter: blur(2px);
-            }
+        .box:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 15px rgba(0,0,0,0.3);
+        }
 
-            .snowflake {
-                position: fixed;
-                width: 20px;
-                height: 20px;
-                background-image: url('https://external-content.duckduckgo.com/iu/?u=https%3A%2F%2Fclipart.info%2Fimages%2Fccovers%2F1559758193white-snowflake-png-37.png&f=1&nofb=1&ipt=a4bf095acddef1ed3a2201bed26124e3f28e150854d58011620a1d30de2d400d&ipo=images');
-                background-size: contain;
-                background-repeat: no-repeat;
-                pointer-events: none;
-                animation: fall linear infinite;
-                opacity: 0.5;
-                z-index: -1;
-            }
+        .box::before {
+            content: "R.I.P";
+            color: #444;
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            font-size: 2.5em;
+            opacity: 0.3;
+            transition: opacity 0.3s ease;
+            font-family: 'Caveat', cursive;
+            letter-spacing: 3px;
+        }
 
-            @keyframes fall {
-                to {
-                    transform: translateY(100vh);
-                }
-            }
+        .revealed-text {
+            color: #ff3333;
+            position: relative;
+            z-index: 1;
+            font-size: 1.3em;
+            opacity: 0;
+            animation: textReveal 0.8s ease-out forwards;
+            font-family: 'Patrick Hand', cursive;
+            line-height: 1.5;
+        }
 
-            .main-container {
-                background: rgba(255, 255, 255, 0.05);
-                padding: 50px 70px;
-                border-radius: 25px;
-                box-shadow: var(--box-shadow);
-                backdrop-filter: blur(10px);
-                border: 1px solid rgba(255, 255, 255, 0.1);
-                text-align: center;
-                display: flex;
-                flex-direction: column;
-                align-items: center;
-                gap: 50px;
-                max-width: 450px;
-                width: 90%;
-                animation: fadeIn 1s ease forwards;
+        .footer {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            color: #ff4444;
+            font-family: 'Caveat', cursive;
+            font-size: 1.4em;
+            opacity: 0.8;
+            letter-spacing: 1px;
+        }
+
+        @keyframes textReveal {
+            from {
                 opacity: 0;
+                transform: translateY(10px);
             }
-
-            @keyframes fadeIn {
-                to {
-                    opacity: 1;
-                    transform: translateY(0);
-                }
-                from {
-                    opacity: 0;
-                    transform: translateY(20px);
-                }
+            to {
+                opacity: 0.95;
+                transform: translateY(0);
             }
+        }
 
-            .button-group {
-                display: flex;
-                flex-direction: column;
-                gap: 15px;
-                width: 100%;
-            }
+        .audio-container {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            opacity: 0.3;
+            transition: opacity 0.3s ease;
+        }
 
-            .btn {
-                padding: 16px 24px;
-                border: none;
-                border-radius: 16px;
-                font-size: 1.1em;
-                font-weight: 600;
-                cursor: pointer;
-                transition: all var(--transition-speed) cubic-bezier(0.4, 0, 0.2, 1);
-                position: relative;
-                overflow: hidden;
-                color: var(--text-color);
-                background: var(--accent-gradient);
-                opacity: 0;
-                animation: fadeInButtons 1s ease forwards;
-            }
+        .audio-container:hover {
+            opacity: 0.8;
+        }
+    </style>
+</head>
+<body>
+    <div class="audio-container">
+        <audio controls autoplay loop>
+            <source src="4.mp3" type="audio/mpeg">
+            Your browser does not support the audio element.
+        </audio>
+    </div>
 
-            .btn:hover {
-                transform: translateY(-5px);
-                box-shadow: 0 10px 25px rgba(138, 43, 226, 0.4);
-            }
+    <div class="container">
+        <div class="box" onclick="revealText(this)"></div>
+        <div class="box" onclick="revealText(this)"></div>
+        <div class="box" onclick="revealText(this)"></div>
+    </div>
+    <div class="footer">by exotic</div>
 
-            @keyframes fadeInButtons {
-                0% { 
-                    opacity: 0;
-                    transform: translateY(10px);
-                }
-                100% { 
-                    opacity: 1;
-                    transform: translateY(0);
-                }
-            }
+    <script>
+        const texts = [
+            ``,
 
-            .coming-soon {
-                font-size: 2.4em;
-                background: var(--accent-gradient);
-                -webkit-background-clip: text;
-                background-clip: text;
-                color: transparent;
-                font-weight: 700;
-                animation: floatText 3s ease-in-out infinite;
-            }
+            `Beneath the veil of midnight's shroud,
+Echoes speak in voices loud,
+What's written here in crimson hue,
+Reveals the truth that once we knew.`,
 
-            @keyframes floatText {
-                0%, 100% {
-                    transform: translateY(0);
-                }
-                50% {
-                    transform: translateY(-10px);
-                }
-            }
+            `The final rest, the eternal sleep,
+In these dark pages, secrets keep,
+Read aloud what's written here,
+But speak with caution, shrink with fear.`
+        ];
 
-            .credits {
-                font-size: 0.95em;
-                color: var(--muted-text-color);
-                display: flex;
-                flex-direction: column;
-                gap: 8px;
-                align-items: center;
-            }
+        let textIndex = 0;
 
-            .credits a {
-                color: var(--muted-text-color);
-                text-decoration: none;
-                transition: all var(--transition-speed) ease;
-                position: relative;
-            }
-
-            .credits a::after {
-                content: '';
-                position: absolute;
-                width: 0;
-                height: 2px;
-                bottom: -2px;
-                left: 0;
-                background: var(--accent-gradient);
-                transition: width var(--transition-speed) ease;
-            }
-
-            .credits a:hover::after {
-                width: 100%;
-            }
-
-            .heart {
-                color: var(--primary-color);
-                cursor: pointer;
-                transition: transform 0.4s cubic-bezier(0.68, -0.6, 0.32, 1.6);
-                display: inline-block;
-            }
-
-            .heart.active {
-                color: var(--secondary-color);
-                transform: scale(1.5) rotate(360deg);
-            }
-
-            @media (max-width: 480px) {
-                .main-container {
-                    padding: 35px 25px;
-                }
-
-                .btn {
-                    font-size: 1em;
-                    padding: 14px 20px;
-                }
-
-                .coming-soon {
-                    font-size: 1.8em;
-                }
-            }
-        </style>
-    </head>
-    <body>
-        <canvas id="wave-canvas"></canvas>
-        <div id="snowflakes-container"></div>
-
-        <div class="main-container">
-            <div class="button-group">
-                <button class="btn" onclick="window.open('steam://connect/5.57.32.32:28523', '_blank')">
-                    Join Our Server
-                </button>
-                <button class="btn" onclick="window.open('https://discord.gg/PMaGgxs7zw', '_blank')">
-                    Join Our Discord
-                </button>
-            </div>
-
-            <div class="coming-soon">
-                Coming Soon
-            </div>
-
-            <div class="credits">
-                <div>by <span>Exotic</span> & <span>Opcoir</span></div>
-                <div>
-                    Made with <span class="heart" onclick="toggleHeart()">&#10084;</span>
-                </div>
-                <div>
-                    <a href="tos.html">Terms of Service</a> &copy; 2025 
-                    <a href="https://xeero.vip" target="_blank">xeero.vip</a> & 
-                    <a href="https://r0p3.site" target="_blank">r0p3.site</a>
-                </div>
-            </div>
-        </div>
-
-        <script>
-            function toggleHeart() {
-                const heart = document.querySelector('.heart');
-                heart.classList.toggle('active');
-            }
-
-            const canvas = document.getElementById('wave-canvas');
-            const ctx = canvas.getContext('2d');
-            let width, height;
-
-            function resizeCanvas() {
-                width = canvas.width = window.innerWidth;
-                height = canvas.height = window.innerHeight;
-            }
-            window.addEventListener('resize', resizeCanvas);
-            resizeCanvas();
-
-            class Wave3D {
-                constructor() {
-                    this.points = [];
-                    this.speed = 0.001 + Math.random() * 0.001; // Reduced speed
-                    this.color = this.getRandomColor();
-                    this.z = Math.random() * 200 - 100;
-                    this.thickness = 15 + Math.random() * 20; // Reduced thickness
-                    this.initPoints();
-                }
-
-                getRandomColor() {
-                    const colors = [
-                        'rgba(138, 43, 226, ',
-                        'rgba(255, 20, 147, ',
-                        'rgba(64, 224, 208, '
-                    ];
-                    return colors[Math.floor(Math.random() * colors.length)];
-                }
-
-                initPoints() {
-                    const segments = 50;
-                    for (let i = 0; i <= segments; i++) {
-                        this.points.push({
-                            x: (width * i) / segments,
-                            y: height / 2,
-                            z: this.z
-                        });
-                    }
-                }
-
-                update(time) {
-                    this.points.forEach((point, i) => {
-                        const factor = (time * this.speed + i * 0.2) % (Math.PI * 2);
-                        point.y = height / 2 + Math.sin(factor) * 30; // Reduced amplitude
-                        point.z = this.z + Math.cos(factor) * 20;
-                    });
-                }
-
-                draw(ctx) {
-                    for (let layer = 0; layer < 10; layer++) {
-                        const layerZ = this.z + layer * 2;
-                        const alpha = 0.1 - (layer * 0.01);
-
-                        ctx.beginPath();
-                        ctx.fillStyle = this.color + alpha + ')';
-
-                        const scale0 = (400 + layerZ) / 400;
-                        const startX = this.points[0].x * scale0 + (1 - scale0) * width / 2;
-                        const startY = this.points[0].y * scale0 + (1 - scale0) * height / 2;
-                        ctx.moveTo(startX, startY);
-
-                        this.points.forEach((point, i) => {
-                            const scale = (400 + layerZ) / 400;
-                            const screenX = point.x * scale + (1 - scale) * width / 2;
-                            const screenY = point.y * scale + (1 - scale) * height / 2;
-
-                            if (i === 0) {
-                                ctx.moveTo(screenX, screenY);
-                            } else {
-                                const prevPoint = this.points[i - 1];
-                                const prevScale = (400 + layerZ) / 400;
-                                const prevX = prevPoint.x * prevScale + (1 - prevScale) * width / 2;
-                                const prevY = prevPoint.y * prevScale + (1 - prevScale) * height / 2;
-
-                                const cpX = (prevX + screenX) / 2;
-                                ctx.quadraticCurveTo(prevX, prevY, cpX, (prevY + screenY) / 2);
-                            }
-                        });
-
-                        for (let i = this.points.length - 1; i >= 0; i--) {
-                            const point = this.points[i];
-                            const scale = (400 + layerZ) / 400;
-                            const screenX = point.x * scale + (1 - scale) * width / 2;
-                            const screenY = (point.y + this.thickness) * scale + (1 - scale) * height / 2;
-
-                            if (i === this.points.length - 1) {
-                                ctx.lineTo(screenX, screenY);
-                            } else {
-                                const nextPoint = this.points[i + 1];
-                                const nextScale = (400 + layerZ) / 400;
-                                const nextX = nextPoint.x * nextScale + (1 - nextScale) * width / 2;
-                                const nextY = (nextPoint.y + this.thickness) * nextScale + (1 - nextScale) * height / 2;
-
-                                const cpX = (nextX + screenX) / 2;
-                                ctx.quadraticCurveTo(nextX, nextY, cpX, (nextY + screenY) / 2);
-                            }
-                        }
-
-                        ctx.closePath();
-                        ctx.fill();
-                    }
-                }
-            }
-
-            const waves = Array(4).fill(null).map(() => new Wave3D()); // Reduced number of waves
-
-            function animate(time) {
-                ctx.fillStyle = 'rgba(10, 10, 10, 0.4)'; // Increased trail effect
-                ctx.fillRect(0, 0, width, height);
-
-                waves.sort((a, b) => b.z - a.z);
-                
-                waves.forEach(wave => {
-                    wave.update(time * 0.001);
-                    wave.draw(ctx);
+        function revealText(element) {
+            if (!element.dataset.loaded) {
+                element.innerHTML = `<span class="revealed-text">${texts[textIndex % texts.length]}</span>`;
+                element.dataset.loaded = true;
+                textIndex++;
+                element.querySelector('.revealed-text').addEventListener('animationend', () => {
+                    element.style.backgroundImage = 'none';
                 });
-
-                requestAnimationFrame(animate);
+            } else {
+                element.innerHTML = '';
+                delete element.dataset.loaded;
+                element.style.backgroundImage = 'linear-gradient(#252525 1px, transparent 1px)';
             }
-
-            animate(0);
-
-            function createSnowflake() {
-                const snowflake = document.createElement('div');
-                snowflake.classList.add('snowflake');
-                snowflake.style.left = `${Math.random() * window.innerWidth}px`;
-                snowflake.style.animationDuration = `${Math.random() * 3 + 2}s`; // Vary animation duration
-                snowflake.style.opacity = `${Math.random()}`;
-                snowflake.style.transform = `scale(${Math.random()})`;
-                document.getElementById('snowflakes-container').appendChild(snowflake);
-
-                // Remove snowflake after it falls
-                setTimeout(() => {
-                    snowflake.remove();
-                }, 5000);
-            }
-
-            setInterval(createSnowflake, 100); // Create a new snowflake every 100ms
-        </script>
-    </body>
-    </html>
+        }
+    </script>
+</body>
+</html>
