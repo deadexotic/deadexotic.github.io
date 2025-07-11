@@ -1,1 +1,245 @@
-hi
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>die.skin</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            background: #0a0a0a;
+            color: #e4e4e7;
+            line-height: 1.6;
+            overflow-x: hidden;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 0 20px;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .bio-card {
+            background: linear-gradient(135deg, #111111 0%, #1a1a1a 100%);
+            border: 1px solid #333333;
+            border-radius: 20px;
+            padding: 40px;
+            width: 100%;
+            max-width: 500px;
+            text-align: center;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+            backdrop-filter: blur(10px);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .bio-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(135deg, rgba(255, 255, 255, 0.05) 0%, transparent 50%);
+            pointer-events: none;
+        }
+
+        .profile-image {
+            width: 120px;
+            height: 120px;
+            border-radius: 50%;
+            margin: 0 auto 30px;
+            border: 3px solid #333333;
+            background: #1a1a1a;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            overflow: hidden;
+            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.3);
+        }
+
+        .profile-image img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            border-radius: 50%;
+        }
+
+        .profile-image::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            border-radius: 50%;
+            background: linear-gradient(135deg, rgba(255, 255, 255, 0.1) 0%, transparent 70%);
+        }
+
+        .name {
+            font-size: 2.5rem;
+            font-weight: 600;
+            margin-bottom: 10px;
+            background: linear-gradient(135deg, #ffffff, #a1a1aa);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .handle {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 1.1rem;
+            color: #71717a;
+            margin-bottom: 30px;
+            font-weight: 500;
+        }
+
+        .bio {
+            font-size: 1.1rem;
+            color: #d4d4d8;
+            margin-bottom: 40px;
+            line-height: 1.7;
+        }
+
+        .links {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        .link {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 15px 25px;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid #333333;
+            border-radius: 12px;
+            text-decoration: none;
+            color: #e4e4e7;
+            font-weight: 500;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .link::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.1), transparent);
+            transition: left 0.5s;
+        }
+
+        .link:hover {
+            background: rgba(255, 255, 255, 0.1);
+            border-color: #555555;
+            transform: translateY(-2px);
+            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+        }
+
+        .link:hover::before {
+            left: 100%;
+        }
+
+        .link-icon {
+            margin-right: 12px;
+            font-size: 1.2rem;
+        }
+
+        .footer {
+            margin-top: 60px;
+            text-align: center;
+            color: #52525b;
+            font-size: 0.9rem;
+            font-family: 'JetBrains Mono', monospace;
+        }
+
+        @media (max-width: 600px) {
+            .container {
+                padding: 20px;
+            }
+            
+            .bio-card {
+                padding: 30px 25px;
+            }
+            
+            .name {
+                font-size: 2rem;
+            }
+            
+            .profile-image {
+                width: 100px;
+                height: 100px;
+            }
+        }
+
+        /* Subtle animations */
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .bio-card {
+            animation: fadeInUp 0.8s ease-out;
+        }
+
+        .link {
+            animation: fadeInUp 0.8s ease-out;
+        }
+
+        .link:nth-child(1) { animation-delay: 0.1s; }
+        .link:nth-child(2) { animation-delay: 0.2s; }
+        .link:nth-child(3) { animation-delay: 0.3s; }
+        .link:nth-child(4) { animation-delay: 0.4s; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="bio-card">
+            <div class="profile-image">
+                <img src="9.png" alt="Profile" onerror="this.style.display='none'">
+            </div>
+            
+            <h1 class="name">die.skin</h1>
+            <p class="handle">@die.skin</p>
+            
+            <p class="bio">
+                More content coming soon...
+            </p>
+            
+            <div class="links">
+                <!-- Links will be added later -->
+            </div>
+        </div>
+        
+        <div class="footer">
+            <p>// end of transmission</p>
+        </div>
+    </div>
+</body>
+</html>
