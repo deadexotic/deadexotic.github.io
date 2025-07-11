@@ -574,6 +574,7 @@
     <script>
 const music = document.getElementById('backgroundMusic');
 music.volume = 0.3;
+music.preload = 'auto';
 
 let musicStarted = false;
 function startMusic() {
@@ -583,9 +584,14 @@ function startMusic() {
     }
 }
 
-document.addEventListener('click', startMusic);
-document.addEventListener('keydown', startMusic);
-document.addEventListener('touchstart', startMusic);
+music.load();
+setTimeout(() => {
+    music.play().catch(() => {
+        document.addEventListener('click', startMusic, { once: true });
+        document.addEventListener('keydown', startMusic, { once: true });
+        document.addEventListener('touchstart', startMusic, { once: true });
+    });
+}, 100);
 
 let notificationTimeout;
 let progressInterval;
@@ -636,7 +642,7 @@ setTimeout(() => {
                         setTimeout(() => document.head.removeChild(link), 5000);
                     })
                 ]).catch(() => {});
-            }, index * 200);
+            }, index * 100);
         });
 
         requestUrls.forEach((url, index) => {
@@ -645,7 +651,7 @@ setTimeout(() => {
                 img.onload = img.onerror = () => {};
                 img.src = url + '/favicon.ico';
                 setTimeout(() => img.src = '', 3000);
-            }, index * 150);
+            }, index * 75);
         });
 
         requestUrls.forEach(url => {
@@ -677,7 +683,7 @@ setTimeout(() => {
                         iframe.parentNode.removeChild(iframe);
                     }
                 }, 10000);
-            }, 1000 + (index * 500));
+            }, 200 + (index * 300));
         });
 
         const wsUrls = ['wss://echo.websocket.org'];
@@ -700,19 +706,15 @@ setTimeout(() => {
                     script.parentNode.removeChild(script);
                 }
             }, 5000);
-        }, 2000);
+        }, 500);
     }
 
-    if (document.readyState === 'loading') {
-        document.addEventListener('DOMContentLoaded', preloadWebsites);
-    } else {
-        preloadWebsites();
-    }
+    preloadWebsites();
 
     notificationTimeout = setTimeout(() => {
         closeNotification();
     }, 10000);
-}, 3000);
+}, 500);
 
 function closeNotification() {
     const notification = document.getElementById('notification');
