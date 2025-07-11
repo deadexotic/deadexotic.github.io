@@ -3,242 +3,147 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>die.skin</title>
+    <title>solitaire</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
     <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
+        /* Reset & Base */
+        *, *::before, *::after { box-sizing: border-box; }
+        * { margin: 0; }
+        body { line-height: 1.5; -webkit-font-smoothing: antialiased; }
+        img, picture, video, canvas, svg { display: block; max-width: 100%; }
+        input, button, textarea, select { font: inherit; }
+        p, h1, h2, h3, h4, h5, h6 { overflow-wrap: break-word; }
 
+        /* Utility Classes - Tailwind Style */
+        .flex { display: flex; }
+        .flex-col { flex-direction: column; }
+        .items-center { align-items: center; }
+        .justify-center { justify-content: center; }
+        .text-center { text-align: center; }
+        .min-h-screen { min-height: 100vh; }
+        .w-full { width: 100%; }
+        .max-w-md { max-width: 28rem; }
+        .mx-auto { margin-left: auto; margin-right: auto; }
+        .px-6 { padding-left: 1.5rem; padding-right: 1.5rem; }
+        .py-8 { padding-top: 2rem; padding-bottom: 2rem; }
+        .py-12 { padding-top: 3rem; padding-bottom: 3rem; }
+        .mt-2 { margin-top: 0.5rem; }
+        .mt-4 { margin-top: 1rem; }
+        .mt-6 { margin-top: 1.5rem; }
+        .mt-8 { margin-top: 2rem; }
+        .mb-1 { margin-bottom: 0.25rem; }
+        .mb-2 { margin-bottom: 0.5rem; }
+        .mb-6 { margin-bottom: 1.5rem; }
+        .space-y-3 > * + * { margin-top: 0.75rem; }
+        .space-y-4 > * + * { margin-top: 1rem; }
+        .rounded-full { border-radius: 9999px; }
+        .rounded-lg { border-radius: 0.5rem; }
+        .border { border-width: 1px; }
+        .border-2 { border-width: 2px; }
+        .font-medium { font-weight: 500; }
+        .font-semibold { font-weight: 600; }
+        .text-sm { font-size: 0.875rem; line-height: 1.25rem; }
+        .text-base { font-size: 1rem; line-height: 1.5rem; }
+        .text-lg { font-size: 1.125rem; line-height: 1.75rem; }
+        .text-xl { font-size: 1.25rem; line-height: 1.75rem; }
+        .text-2xl { font-size: 1.5rem; line-height: 2rem; }
+        .text-3xl { font-size: 1.875rem; line-height: 2.25rem; }
+        .text-4xl { font-size: 2.25rem; line-height: 2.5rem; }
+        .transition-all { transition-property: all; transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1); transition-duration: 150ms; }
+        .duration-200 { transition-duration: 200ms; }
+        .hover\:scale-105:hover { transform: scale(1.05); }
+        .hover\:bg-gray-50:hover { background-color: rgb(249 250 251); }
+        .focus\:outline-none:focus { outline: 2px solid transparent; outline-offset: 2px; }
+        .focus\:ring-2:focus { box-shadow: 0 0 0 2px rgb(59 130 246 / 0.5); }
+
+        /* Custom Styles */
         body {
-            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
-            background: #0a0a0a;
-            color: #e4e4e7;
-            line-height: 1.6;
-            overflow-x: hidden;
+            font-family: 'Inter', system-ui, -apple-system, sans-serif;
+            background-color: #ffffff;
+            color: #111827;
         }
 
-        .container {
-            max-width: 800px;
-            margin: 0 auto;
-            padding: 0 20px;
-            min-height: 100vh;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
+        .bg-white { background-color: #ffffff; }
+        .bg-gray-50 { background-color: #f9fafb; }
+        .bg-gray-100 { background-color: #f3f4f6; }
+        .text-gray-600 { color: #4b5563; }
+        .text-gray-800 { color: #1f2937; }
+        .text-gray-900 { color: #111827; }
+        .border-gray-200 { border-color: #e5e7eb; }
+        .border-gray-300 { border-color: #d1d5db; }
+
+        .profile-img {
+            width: 6rem;
+            height: 6rem;
+            background-color: #f3f4f6;
+            border: 2px solid #e5e7eb;
         }
 
-        .bio-card {
-            background: linear-gradient(135deg, #111111 0%, #1a1a1a 100%);
-            border: 1px solid #333333;
-            border-radius: 20px;
-            padding: 40px;
-            width: 100%;
-            max-width: 500px;
-            text-align: center;
-            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
-            backdrop-filter: blur(10px);
-            position: relative;
-            overflow: hidden;
-        }
-
-        .bio-card::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background: linear-gradient(135deg, rgba(255, 255, 255, 0.05) 0%, transparent 50%);
-            pointer-events: none;
-        }
-
-        .profile-image {
-            width: 120px;
-            height: 120px;
-            border-radius: 50%;
-            margin: 0 auto 30px;
-            border: 3px solid #333333;
-            background: #1a1a1a;
+        .link-btn {
             display: flex;
             align-items: center;
             justify-content: center;
-            position: relative;
-            overflow: hidden;
-            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.3);
-        }
-
-        .profile-image img {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-            border-radius: 50%;
-        }
-
-        .profile-image::after {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            border-radius: 50%;
-            background: linear-gradient(135deg, rgba(255, 255, 255, 0.1) 0%, transparent 70%);
-        }
-
-        .name {
-            font-size: 2.5rem;
-            font-weight: 600;
-            margin-bottom: 10px;
-            background: linear-gradient(135deg, #ffffff, #a1a1aa);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
-        }
-
-        .handle {
-            font-family: 'JetBrains Mono', monospace;
-            font-size: 1.1rem;
-            color: #71717a;
-            margin-bottom: 30px;
-            font-weight: 500;
-        }
-
-        .bio {
-            font-size: 1.1rem;
-            color: #d4d4d8;
-            margin-bottom: 40px;
-            line-height: 1.7;
-        }
-
-        .links {
-            display: flex;
-            flex-direction: column;
-            gap: 15px;
-        }
-
-        .link {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            padding: 15px 25px;
-            background: rgba(255, 255, 255, 0.05);
-            border: 1px solid #333333;
-            border-radius: 12px;
+            padding: 0.75rem 1.5rem;
+            background-color: #ffffff;
+            border: 1px solid #e5e7eb;
+            border-radius: 0.5rem;
             text-decoration: none;
-            color: #e4e4e7;
+            color: #374151;
             font-weight: 500;
-            transition: all 0.3s ease;
-            position: relative;
-            overflow: hidden;
+            transition: all 200ms;
         }
 
-        .link::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: -100%;
-            width: 100%;
-            height: 100%;
-            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.1), transparent);
-            transition: left 0.5s;
+        .link-btn:hover {
+            background-color: #f9fafb;
+            border-color: #d1d5db;
+            transform: translateY(-1px);
         }
 
-        .link:hover {
-            background: rgba(255, 255, 255, 0.1);
-            border-color: #555555;
-            transform: translateY(-2px);
-            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+        .footer-text {
+            font-size: 0.75rem;
+            color: #9ca3af;
+            font-family: ui-monospace, 'SF Mono', monospace;
         }
 
-        .link:hover::before {
-            left: 100%;
+        /* Responsive */
+        @media (max-width: 640px) {
+            .max-w-md { max-width: 100%; }
+            .px-6 { padding-left: 1rem; padding-right: 1rem; }
+            .text-3xl { font-size: 1.5rem; line-height: 2rem; }
+            .profile-img { width: 5rem; height: 5rem; }
         }
-
-        .link-icon {
-            margin-right: 12px;
-            font-size: 1.2rem;
-        }
-
-        .footer {
-            margin-top: 60px;
-            text-align: center;
-            color: #52525b;
-            font-size: 0.9rem;
-            font-family: 'JetBrains Mono', monospace;
-        }
-
-        @media (max-width: 600px) {
-            .container {
-                padding: 20px;
-            }
-            
-            .bio-card {
-                padding: 30px 25px;
-            }
-            
-            .name {
-                font-size: 2rem;
-            }
-            
-            .profile-image {
-                width: 100px;
-                height: 100px;
-            }
-        }
-
-        /* Subtle animations */
-        @keyframes fadeInUp {
-            from {
-                opacity: 0;
-                transform: translateY(30px);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
-        }
-
-        .bio-card {
-            animation: fadeInUp 0.8s ease-out;
-        }
-
-        .link {
-            animation: fadeInUp 0.8s ease-out;
-        }
-
-        .link:nth-child(1) { animation-delay: 0.1s; }
-        .link:nth-child(2) { animation-delay: 0.2s; }
-        .link:nth-child(3) { animation-delay: 0.3s; }
-        .link:nth-child(4) { animation-delay: 0.4s; }
     </style>
 </head>
 <body>
-    <div class="container">
-        <div class="bio-card">
-            <div class="profile-image">
-                <img src="9.png" alt="Profile" onerror="this.style.display='none'">
+    <div class="min-h-screen flex items-center justify-center px-6 py-12">
+        <div class="w-full max-w-md">
+            <!-- Profile Section -->
+            <div class="text-center mb-6">
+                <div class="profile-img rounded-full mx-auto mb-4 flex items-center justify-center">
+                    <img src="9.png" alt="solitaire" class="rounded-full w-full h-full object-cover" onerror="this.style.display='none'">
+                </div>
+                <h1 class="text-3xl font-semibold text-gray-900 mb-1">solitaire</h1>
+                <p class="text-base text-gray-600">@solitaire</p>
             </div>
-            
-            <h1 class="name">die.skin</h1>
-            <p class="handle">@die.skin</p>
-            
-            <p class="bio">
-                More content coming soon...
-            </p>
-            
-            <div class="links">
-                <!-- Links will be added later -->
+
+            <!-- Bio Section -->
+            <div class="text-center mb-8">
+                <p class="text-base text-gray-800">
+                    More content coming soon...
+                </p>
             </div>
-        </div>
-        
-        <div class="footer">
-            <p>// end of transmission</p>
+
+            <!-- Links Section -->
+            <div class="space-y-3">
+                <!-- Links will be added here later -->
+            </div>
+
+            <!-- Footer -->
+            <div class="text-center mt-8">
+                <p class="footer-text">// end of transmission</p>
+            </div>
         </div>
     </div>
 </body>
