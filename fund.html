@@ -1,0 +1,487 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Show Funds</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+    <style>
+        /* Reset & Base */
+        *, *::before, *::after { box-sizing: border-box; }
+        * { margin: 0; }
+        body { line-height: 1.5; -webkit-font-smoothing: antialiased; }
+        img, picture, video, canvas, svg { display: block; max-width: 100%; }
+        input, button, textarea, select { font: inherit; }
+        p, h1, h2, h3, h4, h5, h6 { overflow-wrap: break-word; }
+
+        /* Dark Theme Variables */
+        :root {
+            --bg-primary: #0a0a0a;
+            --bg-secondary: #111111;
+            --bg-tertiary: #1a1a1a;
+            --text-primary: #ffffff;
+            --text-secondary: #a1a1aa;
+            --text-muted: #71717a;
+            --border-color: #262626;
+            --accent-color: #6366f1;
+            --accent-hover: #4f46e5;
+            --success-color: #10b981;
+            --warning-color: #f59e0b;
+            --error-color: #ef4444;
+            --gradient-1: rgba(239, 68, 68, 0.1);
+            --gradient-2: rgba(245, 158, 11, 0.1);
+        }
+
+        /* Utility Classes */
+        .flex { display: flex; }
+        .flex-col { flex-direction: column; }
+        .items-center { align-items: center; }
+        .justify-center { justify-content: center; }
+        .justify-between { justify-content: space-between; }
+        .text-center { text-align: center; }
+        .min-h-screen { min-height: 100vh; }
+        .w-full { width: 100%; }
+        .max-w-md { max-width: 28rem; }
+        .max-w-2xl { max-width: 42rem; }
+        .mx-auto { margin-left: auto; margin-right: auto; }
+        .px-6 { padding-left: 1.5rem; padding-right: 1.5rem; }
+        .py-8 { padding-top: 2rem; padding-bottom: 2rem; }
+        .py-12 { padding-top: 3rem; padding-bottom: 3rem; }
+        .mt-2 { margin-top: 0.5rem; }
+        .mt-4 { margin-top: 1rem; }
+        .mt-6 { margin-top: 1.5rem; }
+        .mt-8 { margin-top: 2rem; }
+        .mb-1 { margin-bottom: 0.25rem; }
+        .mb-2 { margin-bottom: 0.5rem; }
+        .mb-4 { margin-bottom: 1rem; }
+        .mb-6 { margin-bottom: 1.5rem; }
+        .mb-8 { margin-bottom: 2rem; }
+        .space-y-3 > * + * { margin-top: 0.75rem; }
+        .space-y-4 > * + * { margin-top: 1rem; }
+        .rounded-full { border-radius: 9999px; }
+        .rounded-lg { border-radius: 0.5rem; }
+        .rounded-xl { border-radius: 0.75rem; }
+        .border { border-width: 1px; }
+        .border-2 { border-width: 2px; }
+        .font-light { font-weight: 300; }
+        .font-medium { font-weight: 500; }
+        .font-semibold { font-weight: 600; }
+        .font-bold { font-weight: 700; }
+        .text-xs { font-size: 0.75rem; line-height: 1rem; }
+        .text-sm { font-size: 0.875rem; line-height: 1.25rem; }
+        .text-base { font-size: 1rem; line-height: 1.5rem; }
+        .text-lg { font-size: 1.125rem; line-height: 1.75rem; }
+        .text-xl { font-size: 1.25rem; line-height: 1.75rem; }
+        .text-2xl { font-size: 1.5rem; line-height: 2rem; }
+        .text-3xl { font-size: 1.875rem; line-height: 2.25rem; }
+        .text-4xl { font-size: 2.25rem; line-height: 2.5rem; }
+        .text-5xl { font-size: 3rem; line-height: 1; }
+        .text-6xl { font-size: 3.75rem; line-height: 1; }
+        .transition-all { transition: all 0.3s ease; }
+        .duration-200 { transition-duration: 200ms; }
+        .duration-300 { transition-duration: 300ms; }
+        .hover\:scale-105:hover { transform: scale(1.05); }
+        .hover\:scale-110:hover { transform: scale(1.1); }
+        .cursor-pointer { cursor: pointer; }
+        .relative { position: relative; }
+        .absolute { position: absolute; }
+        .opacity-0 { opacity: 0; }
+        .opacity-100 { opacity: 1; }
+
+        /* Custom Styles */
+        body {
+            font-family: 'Inter', system-ui, -apple-system, sans-serif;
+            background-color: var(--bg-primary);
+            color: var(--text-primary);
+            background-image: 
+                radial-gradient(circle at 20% 80%, var(--gradient-1) 0%, transparent 50%),
+                radial-gradient(circle at 80% 20%, var(--gradient-2) 0%, transparent 50%);
+        }
+
+        .main-container {
+            background: var(--bg-secondary);
+            border: 1px solid var(--border-color);
+            border-radius: 1rem;
+            padding: 3rem;
+            backdrop-filter: blur(10px);
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .main-container::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle at center, 
+                var(--gradient-1) 0%, 
+                rgba(239, 68, 68, 0.05) 25%, 
+                var(--gradient-2) 50%, 
+                transparent 70%);
+            animation: rotateGradient 20s linear infinite;
+            pointer-events: none;
+        }
+
+        .poor-emoji {
+            font-size: 6rem;
+            margin-bottom: 1rem;
+            animation: float 3s ease-in-out infinite;
+        }
+
+        .title {
+            font-family: 'Inter', sans-serif;
+            font-weight: 700;
+            letter-spacing: -0.025em;
+            background: linear-gradient(135deg, var(--error-color), var(--warning-color));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 1rem;
+        }
+
+        .subtitle {
+            font-family: 'JetBrains Mono', monospace;
+            font-weight: 500;
+            color: var(--text-secondary);
+            margin-bottom: 2rem;
+        }
+
+        .balance-display {
+            background: var(--bg-tertiary);
+            border: 1px solid var(--border-color);
+            border-radius: 1rem;
+            padding: 2rem;
+            margin-bottom: 2rem;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .balance-amount {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 3rem;
+            font-weight: 600;
+            color: var(--error-color);
+            margin-bottom: 0.5rem;
+        }
+
+        .balance-label {
+            font-size: 0.875rem;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 1rem;
+            margin-bottom: 2rem;
+        }
+
+        .stat-card {
+            background: var(--bg-tertiary);
+            border: 1px solid var(--border-color);
+            border-radius: 0.75rem;
+            padding: 1.5rem;
+            text-align: center;
+            transition: all 0.3s ease;
+        }
+
+        .stat-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3);
+        }
+
+        .stat-value {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 1.5rem;
+            font-weight: 600;
+            color: var(--error-color);
+            margin-bottom: 0.5rem;
+        }
+
+        .stat-label {
+            font-size: 0.75rem;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+        }
+
+        .action-buttons {
+            display: flex;
+            gap: 1rem;
+            justify-content: center;
+            flex-wrap: wrap;
+            margin-bottom: 2rem;
+        }
+
+        .action-btn {
+            padding: 0.75rem 2rem;
+            border: 1px solid var(--border-color);
+            border-radius: 0.5rem;
+            background: var(--bg-tertiary);
+            color: var(--text-primary);
+            font-family: 'Inter', sans-serif;
+            font-weight: 500;
+            text-decoration: none;
+            transition: all 0.3s ease;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .action-btn:hover {
+            background: var(--accent-color);
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(99, 102, 241, 0.3);
+        }
+
+        .action-btn.primary {
+            background: var(--success-color);
+            color: white;
+        }
+
+        .action-btn.primary:hover {
+            background: #059669;
+            box-shadow: 0 8px 25px rgba(16, 185, 129, 0.3);
+        }
+
+        .poor-message {
+            background: var(--bg-tertiary);
+            border: 1px solid var(--error-color);
+            border-radius: 0.75rem;
+            padding: 1.5rem;
+            margin-bottom: 2rem;
+            text-align: center;
+        }
+
+        .poor-message-title {
+            font-weight: 600;
+            color: var(--error-color);
+            margin-bottom: 0.5rem;
+        }
+
+        .poor-message-text {
+            color: var(--text-secondary);
+            font-size: 0.875rem;
+        }
+
+        .footer-text {
+            font-size: 0.75rem;
+            color: var(--text-muted);
+            font-family: 'JetBrains Mono', monospace;
+            font-weight: 500;
+        }
+
+        .blinking {
+            animation: blink 2s infinite;
+        }
+
+        /* Responsive */
+        @media (max-width: 640px) {
+            .max-w-2xl { max-width: 100%; }
+            .px-6 { padding-left: 1rem; padding-right: 1rem; }
+            .main-container { padding: 2rem; }
+            .poor-emoji { font-size: 4rem; }
+            .title { font-size: 2rem; }
+            .balance-amount { font-size: 2rem; }
+            .action-buttons { flex-direction: column; }
+            .action-btn { justify-content: center; }
+        }
+
+        /* Animations */
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes rotateGradient {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0px); }
+            50% { transform: translateY(-20px); }
+        }
+
+        @keyframes blink {
+            0%, 50% { opacity: 1; }
+            51%, 100% { opacity: 0; }
+        }
+
+        .animate-fadeInUp {
+            animation: fadeInUp 0.6s ease-out;
+        }
+
+        .animate-delay-100 { animation-delay: 0.1s; }
+        .animate-delay-200 { animation-delay: 0.2s; }
+        .animate-delay-300 { animation-delay: 0.3s; }
+        .animate-delay-400 { animation-delay: 0.4s; }
+    </style>
+</head>
+<body>
+    <div class="min-h-screen flex items-center justify-center px-6 py-12">
+        <div class="w-full max-w-2xl main-container animate-fadeInUp relative">
+            
+            <!-- Header -->
+            <div class="text-center mb-8">
+                <div class="poor-emoji">💸</div>
+                <h1 class="title text-5xl mb-2">You're Poor</h1>
+                <p class="subtitle text-lg">// show funds immediately</p>
+            </div>
+
+            <!-- Balance Display -->
+            <div class="balance-display animate-fadeInUp animate-delay-100">
+                <div class="balance-amount blinking">$0.00</div>
+                <div class="balance-label">Current Balance</div>
+            </div>
+
+            <!-- Stats Grid -->
+            <div class="stats-grid animate-fadeInUp animate-delay-200">
+                <div class="stat-card">
+                    <div class="stat-value">$0</div>
+                    <div class="stat-label">Net Worth</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value">$0</div>
+                    <div class="stat-label">Monthly Income</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value">∞</div>
+                    <div class="stat-label">Debt Ratio</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value">0%</div>
+                    <div class="stat-label">Credit Score</div>
+                </div>
+            </div>
+
+            <!-- Poor Message -->
+            <div class="poor-message animate-fadeInUp animate-delay-300">
+                <div class="poor-message-title">🚨 CRITICAL POVERTY ALERT 🚨</div>
+                <div class="poor-message-text">
+                    Your financial situation is more barren than a desert in a drought. 
+                    Time to show some funds before we have to start a GoFundMe for your dignity.
+                </div>
+            </div>
+
+            <!-- Action Buttons -->
+            <div class="action-buttons animate-fadeInUp animate-delay-400">
+                <button class="action-btn primary" onclick="showFunds()">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <circle cx="12" cy="12" r="10"/>
+                        <path d="M12 6v6l4 2"/>
+                    </svg>
+                    Show Funds Now
+                </button>
+                <button class="action-btn" onclick="getBroke()">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M21 12c-1 0-3-1-3-3s2-3 3-3 3 1 3 3-2 3-3 3"/>
+                        <path d="M3 12c1 0 3-1 3-3s-2-3-3-3-3 1-3 3 2 3 3 3"/>
+                        <path d="M10.5 9.5c-.4-.4-1-.4-1.4 0L3 15.6"/>
+                        <path d="m14.5 9.5 5.1 6.1c.4.4 1 .4 1.4 0"/>
+                    </svg>
+                    Get More Broke
+                </button>
+                <button class="action-btn" onclick="cryAboutIt()">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M21 12c0 1.66-4 3-9 3s-9-1.34-9-3"/>
+                        <path d="M3 5v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V5a2 2 0 0 0-2-2H5a2 2 0 0 0-2 2z"/>
+                        <path d="M9 9h.01"/>
+                        <path d="M15 9h.01"/>
+                    </svg>
+                    Cry About It
+                </button>
+            </div>
+
+            <!-- Footer -->
+            <div class="text-center">
+                <p class="footer-text">// poverty.exe is running successfully</p>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function showFunds() {
+            alert("ERROR: No funds detected. Please acquire money first.");
+        }
+
+        function getBroke() {
+            const balance = document.querySelector('.balance-amount');
+            const currentAmount = parseFloat(balance.textContent.replace('$', ''));
+            const newAmount = Math.max(0, currentAmount - Math.random() * 100);
+            balance.textContent = `$${newAmount.toFixed(2)}`;
+            
+            if (newAmount === 0) {
+                alert("Congratulations! You've achieved maximum poverty level!");
+            }
+        }
+
+        function cryAboutIt() {
+            const tears = ['😭', '💧', '😢', '🥺'];
+            const randomTear = tears[Math.floor(Math.random() * tears.length)];
+            
+            // Create floating tears
+            for (let i = 0; i < 10; i++) {
+                createFloatingTear(randomTear);
+            }
+            
+            setTimeout(() => {
+                alert("Crying detected. Poverty level increased by 50%.");
+            }, 1000);
+        }
+
+        function createFloatingTear(emoji) {
+            const tear = document.createElement('div');
+            tear.textContent = emoji;
+            tear.style.position = 'fixed';
+            tear.style.left = Math.random() * window.innerWidth + 'px';
+            tear.style.top = Math.random() * window.innerHeight + 'px';
+            tear.style.fontSize = '2rem';
+            tear.style.zIndex = '1000';
+            tear.style.pointerEvents = 'none';
+            tear.style.animation = 'float 3s ease-out forwards';
+            
+            document.body.appendChild(tear);
+            
+            setTimeout(() => {
+                tear.remove();
+            }, 3000);
+        }
+
+        // Auto-update poverty status
+        setInterval(() => {
+            const messages = [
+                "Still poor...",
+                "Funds not found...",
+                "Wallet.exe has stopped working...",
+                "Bank account: 404 Not Found...",
+                "Money machine broke..."
+            ];
+            
+            const randomMessage = messages[Math.floor(Math.random() * messages.length)];
+            document.querySelector('.poor-message-text').textContent = randomMessage;
+        }, 5000);
+
+        // Add some random crying sounds (visual feedback)
+        document.addEventListener('click', function() {
+            const sadEmojis = ['😭', '💸', '😢', '🥺', '😫'];
+            const randomEmoji = sadEmojis[Math.floor(Math.random() * sadEmojis.length)];
+            createFloatingTear(randomEmoji);
+        });
+    </script>
+</body>
+</html>
