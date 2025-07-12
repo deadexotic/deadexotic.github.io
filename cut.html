@@ -1,0 +1,661 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>squirtle (grave) </title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+    <style>
+        /* Reset & Base */
+        *, *::before, *::after { box-sizing: border-box; }
+        * { margin: 0; }
+        body { line-height: 1.5; -webkit-font-smoothing: antialiased; }
+        img, picture, video, canvas, svg { display: block; max-width: 100%; }
+        input, button, textarea, select { font: inherit; }
+        p, h1, h2, h3, h4, h5, h6 { overflow-wrap: break-word; }
+
+        /* Purple Theme Variables */
+        :root {
+            --bg-primary: #0a0a0a;
+            --bg-secondary: #111111;
+            --bg-tertiary: #1a1a1a;
+            --text-primary: #ffffff;
+            --text-secondary: #e4c1f9;
+            --text-muted: #a663cc;
+            --border-color: #4c1d95;
+            --accent-color: #8b5cf6;
+            --accent-hover: #7c3aed;
+            --success-color: #10b981;
+            --warning-color: #f59e0b;
+            --error-color: #ef4444;
+            --cute-pink: #f8bbd9;
+            --cute-purple: #c084fc;
+        }
+
+        /* Utility Classes */
+        .flex { display: flex; }
+        .flex-col { flex-direction: column; }
+        .items-center { align-items: center; }
+        .justify-center { justify-content: center; }
+        .justify-between { justify-content: space-between; }
+        .text-center { text-align: center; }
+        .min-h-screen { min-height: 100vh; }
+        .w-full { width: 100%; }
+        .max-w-md { max-width: 28rem; }
+        .mx-auto { margin-left: auto; margin-right: auto; }
+        .px-6 { padding-left: 1.5rem; padding-right: 1.5rem; }
+        .py-8 { padding-top: 2rem; padding-bottom: 2rem; }
+        .py-12 { padding-top: 3rem; padding-bottom: 3rem; }
+        .mt-2 { margin-top: 0.5rem; }
+        .mt-4 { margin-top: 1rem; }
+        .mt-6 { margin-top: 1.5rem; }
+        .mt-8 { margin-top: 2rem; }
+        .mb-1 { margin-bottom: 0.25rem; }
+        .mb-2 { margin-bottom: 0.5rem; }
+        .mb-4 { margin-bottom: 1rem; }
+        .mb-6 { margin-bottom: 1.5rem; }
+        .mb-8 { margin-bottom: 2rem; }
+        .space-y-3 > * + * { margin-top: 0.75rem; }
+        .space-y-4 > * + * { margin-top: 1rem; }
+        .rounded-full { border-radius: 9999px; }
+        .rounded-lg { border-radius: 0.5rem; }
+        .rounded-xl { border-radius: 0.75rem; }
+        .border { border-width: 1px; }
+        .border-2 { border-width: 2px; }
+        .font-light { font-weight: 300; }
+        .font-medium { font-weight: 500; }
+        .font-semibold { font-weight: 600; }
+        .font-bold { font-weight: 700; }
+        .text-xs { font-size: 0.75rem; line-height: 1rem; }
+        .text-sm { font-size: 0.875rem; line-height: 1.25rem; }
+        .text-base { font-size: 1rem; line-height: 1.5rem; }
+        .text-lg { font-size: 1.125rem; line-height: 1.75rem; }
+        .text-xl { font-size: 1.25rem; line-height: 1.75rem; }
+        .text-2xl { font-size: 1.5rem; line-height: 2rem; }
+        .text-3xl { font-size: 1.875rem; line-height: 2.25rem; }
+        .text-4xl { font-size: 2.25rem; line-height: 2.5rem; }
+        .transition-all { transition: all 0.3s ease; }
+        .duration-200 { transition-duration: 200ms; }
+        .duration-300 { transition-duration: 300ms; }
+        .hover\:scale-105:hover { transform: scale(1.05); }
+        .hover\:scale-110:hover { transform: scale(1.1); }
+        .focus\:outline-none:focus { outline: 2px solid transparent; outline-offset: 2px; }
+        .cursor-pointer { cursor: pointer; }
+        .relative { position: relative; }
+        .absolute { position: absolute; }
+        .fixed { position: fixed; }
+        .top-4 { top: 1rem; }
+        .right-4 { right: 1rem; }
+        .z-50 { z-index: 50; }
+        .opacity-0 { opacity: 0; }
+        .opacity-100 { opacity: 1; }
+        .pointer-events-none { pointer-events: none; }
+        .pointer-events-auto { pointer-events: auto; }
+        .transform { transform: translateZ(0); }
+        .translate-x-full { transform: translateX(100%); }
+        .translate-x-0 { transform: translateX(0); }
+
+        /* Custom Styles */
+        body {
+            font-family: 'Inter', system-ui, -apple-system, sans-serif;
+            background: var(--bg-primary) url('bg1.png') center/cover no-repeat fixed;
+            color: var(--text-primary);
+            position: relative;
+        }
+
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.7);
+            z-index: -1;
+        }
+
+        .bg-secondary { background-color: var(--bg-secondary); }
+        .bg-tertiary { background-color: var(--bg-tertiary); }
+        .text-primary { color: var(--text-primary); }
+        .text-secondary { color: var(--text-secondary); }
+        .text-muted { color: var(--text-muted); }
+        .border-color { border-color: var(--border-color); }
+
+        .profile-container {
+            background: rgba(17, 17, 17, 0.8);
+            border: 1px solid var(--border-color);
+            border-radius: 1rem;
+            padding: 2rem;
+            backdrop-filter: blur(15px);
+            box-shadow: 0 25px 50px -12px rgba(139, 92, 246, 0.3);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .profile-container::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle at center, 
+                rgba(139, 92, 246, 0.15) 0%, 
+                rgba(192, 132, 252, 0.1) 25%, 
+                rgba(248, 187, 217, 0.08) 50%, 
+                transparent 70%);
+            animation: rotateGradient 20s linear infinite;
+            pointer-events: none;
+        }
+
+        .profile-img {
+            width: 7rem;
+            height: 7rem;
+            background: linear-gradient(135deg, var(--accent-color), var(--cute-pink));
+            border: 3px solid var(--border-color);
+            position: relative;
+            overflow: hidden;
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+
+        .profile-img::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(135deg, rgba(255,255,255,0.1) 0%, rgba(255,255,255,0) 100%);
+            pointer-events: none;
+        }
+
+        .username {
+            font-family: 'Inter', sans-serif;
+            font-weight: 700;
+            letter-spacing: -0.025em;
+            background: linear-gradient(135deg, var(--cute-pink), var(--cute-purple));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .handle {
+            font-family: 'JetBrains Mono', monospace;
+            font-weight: 500;
+            letter-spacing: 0.025em;
+            color: var(--text-secondary);
+        }
+
+        .badges-container {
+            display: flex;
+            gap: 0.5rem;
+            justify-content: center;
+            margin-top: 1rem;
+            flex-wrap: wrap;
+        }
+
+        .badge {
+            padding: 0.25rem 0.75rem;
+            border-radius: 9999px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            transition: all 0.3s ease;
+            cursor: pointer;
+            position: relative;
+            display: flex;
+            align-items: center;
+            gap: 0.25rem;
+            font-family: 'Inter', sans-serif;
+            box-shadow: 0 4px 14px 0 rgba(139, 92, 246, 0.2);
+        }
+
+        .badge-early {
+            background: linear-gradient(135deg, var(--accent-color), var(--cute-purple));
+            color: white;
+        }
+
+        .badge-premium {
+            background: linear-gradient(135deg, var(--cute-pink), #fbbf24);
+            color: #1f2937;
+        }
+
+        .badge-cutie {
+            background: linear-gradient(135deg, var(--cute-pink), #ec4899);
+            color: white;
+        }
+
+        .badge:hover {
+            transform: translateY(-2px);
+            filter: brightness(1.1);
+            box-shadow: 0 8px 25px rgba(139, 92, 246, 0.3);
+        }
+
+        .tooltip {
+            position: absolute;
+            bottom: 100%;
+            left: 50%;
+            transform: translateX(-50%);
+            background: var(--bg-tertiary);
+            color: var(--text-primary);
+            padding: 0.5rem 0.75rem;
+            border-radius: 0.5rem;
+            font-size: 0.75rem;
+            white-space: nowrap;
+            margin-bottom: 0.5rem;
+            opacity: 0;
+            pointer-events: none;
+            transition: all 0.3s ease;
+            border: 1px solid var(--border-color);
+            backdrop-filter: blur(10px);
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3);
+            font-family: 'JetBrains Mono', monospace;
+        }
+
+        .tooltip::after {
+            content: '';
+            position: absolute;
+            top: 100%;
+            left: 50%;
+            transform: translateX(-50%);
+            border: 4px solid transparent;
+            border-top-color: var(--bg-tertiary);
+        }
+
+        .badge:hover .tooltip {
+            opacity: 1;
+            transform: translateX(-50%) translateY(-4px);
+        }
+
+        .contact-button {
+            position: absolute;
+            top: 1rem;
+            left: 1rem;
+            width: 2rem;
+            height: 2rem;
+            border-radius: 50%;
+            background: var(--bg-tertiary);
+            border: 1px solid var(--border-color);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            color: var(--text-secondary);
+        }
+
+        .contact-button:hover {
+            background: var(--cute-pink);
+            color: white;
+            transform: scale(1.1);
+            box-shadow: 0 5px 15px rgba(248, 187, 217, 0.4);
+        }
+
+        .info-button {
+            position: absolute;
+            top: 1rem;
+            right: 1rem;
+            width: 2rem;
+            height: 2rem;
+            border-radius: 50%;
+            background: var(--bg-tertiary);
+            border: 1px solid var(--border-color);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            color: var(--text-secondary);
+        }
+
+        .info-button:hover {
+            background: var(--accent-color);
+            color: white;
+            transform: scale(1.1);
+            box-shadow: 0 5px 15px rgba(139, 92, 246, 0.4);
+        }
+
+        .bio-text {
+            font-family: 'Inter', sans-serif;
+            font-weight: 300;
+            letter-spacing: 0.025em;
+            line-height: 1.6;
+            color: var(--text-secondary);
+        }
+
+        .footer-text {
+            font-size: 0.75rem;
+            color: var(--text-muted);
+            font-family: 'JetBrains Mono', monospace;
+            font-weight: 500;
+        }
+
+        .notification {
+            position: fixed;
+            top: 1rem;
+            right: 1rem;
+            background: rgba(17, 17, 17, 0.9);
+            border: 1px solid var(--border-color);
+            border-radius: 0.75rem;
+            padding: 1rem 1.5rem;
+            box-shadow: 0 25px 50px -12px rgba(139, 92, 246, 0.3);
+            max-width: 300px;
+            z-index: 1000;
+            transform: translateX(100%);
+            transition: all 0.5s ease;
+            cursor: pointer;
+            overflow: hidden;
+            backdrop-filter: blur(15px);
+        }
+
+        .notification.show {
+            transform: translateX(0);
+        }
+
+        .notification:hover {
+            background: rgba(26, 26, 26, 0.9);
+            transform: translateX(0) scale(1.02);
+        }
+
+        .notification-title {
+            font-weight: 600;
+            color: var(--text-primary);
+            margin-bottom: 0.25rem;
+            font-family: 'Inter', sans-serif;
+        }
+
+        .notification-text {
+            font-size: 0.875rem;
+            color: var(--text-secondary);
+            margin-bottom: 0.5rem;
+            font-family: 'Inter', sans-serif;
+        }
+
+        .progress-bar {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            height: 3px;
+            background: linear-gradient(135deg, var(--cute-pink), var(--cute-purple));
+            border-radius: 0 0 0.75rem 0.75rem;
+            transition: width 0.05s linear;
+            box-shadow: 0 0 10px rgba(139, 92, 246, 0.5);
+        }
+
+        .close-btn {
+            position: absolute;
+            top: 0.5rem;
+            right: 0.5rem;
+            background: none;
+            border: none;
+            color: var(--text-muted);
+            cursor: pointer;
+            font-size: 1.25rem;
+            line-height: 1;
+            padding: 0.25rem;
+            border-radius: 0.25rem;
+            transition: all 0.3s ease;
+        }
+
+        .close-btn:hover {
+            background: var(--bg-tertiary);
+            color: var(--text-primary);
+        }
+
+        /* Responsive */
+        @media (max-width: 640px) {
+            .max-w-md { max-width: 100%; }
+            .px-6 { padding-left: 1rem; padding-right: 1rem; }
+            .text-3xl { font-size: 1.75rem; line-height: 2.25rem; }
+            .profile-img { width: 6rem; height: 6rem; }
+            .profile-container { padding: 1.5rem; }
+            .notification { 
+                max-width: calc(100vw - 2rem); 
+                right: 1rem;
+                left: 1rem;
+            }
+        }
+
+        /* Animations */
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes rotateGradient {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+        }
+
+        .animate-fadeInUp {
+            animation: fadeInUp 0.6s ease-out;
+        }
+
+        .animate-delay-100 { animation-delay: 0.1s; }
+        .animate-delay-200 { animation-delay: 0.2s; }
+        .animate-delay-300 { animation-delay: 0.3s; }
+
+        .cute-sparkle {
+            position: absolute;
+            width: 6px;
+            height: 6px;
+            background: var(--cute-pink);
+            border-radius: 50%;
+            animation: sparkle 2s ease-in-out infinite;
+        }
+
+        .cute-sparkle:nth-child(1) { top: 20%; left: 15%; animation-delay: 0s; }
+        .cute-sparkle:nth-child(2) { top: 60%; right: 20%; animation-delay: 0.5s; }
+        .cute-sparkle:nth-child(3) { bottom: 30%; left: 25%; animation-delay: 1s; }
+
+        @keyframes sparkle {
+            0%, 100% { opacity: 0; transform: scale(0); }
+            50% { opacity: 1; transform: scale(1); }
+        }
+    </style>
+</head>
+<body>
+    <div class="min-h-screen flex items-center justify-center px-6 py-12">
+        <div class="w-full max-w-md profile-container animate-fadeInUp relative">
+            <!-- Cute sparkles -->
+            <div class="cute-sparkle"></div>
+            <div class="cute-sparkle"></div>
+            <div class="cute-sparkle"></div>
+
+            <!-- Contact Button -->
+            <a href="mailto:contact@example.com" class="contact-button" title="Contact">
+                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/>
+                </svg>
+            </a>
+
+            <!-- Info Button -->
+            <a href="#" class="info-button" title="Info">
+                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <circle cx="12" cy="12" r="10"/>
+                    <path d="M9,9h0a3,3,0,0,1,5.12,2.12h0A3,3,0,0,1,13,15"/>
+                    <circle cx="12" cy="19" r="1"/>
+                </svg>
+            </a>
+
+            <!-- Profile Section -->
+            <div class="text-center mb-6 animate-fadeInUp animate-delay-100">
+                <div class="profile-img rounded-full mx-auto mb-4 flex items-center justify-center">
+                    <img src="pf2.png" alt="femboy" class="rounded-full w-full h-full object-cover" onerror="this.style.display='none'">
+                </div>
+                <h1 class="username text-3xl mb-1">squirtle</h1>
+                <p class="handle text-base">@coliseums</p>
+                
+                <!-- Badges -->
+                <div class="badges-container animate-fadeInUp animate-delay-200">
+                    <div class="badge badge-early">
+                        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <circle cx="12" cy="12" r="10"/>
+                            <polyline points="12,6 12,12 16,14"/>
+                        </svg>
+                        Early
+                        <div class="tooltip">UID: 2</div>
+                    </div>
+                    <div class="badge badge-premium">
+                        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <polygon points="12,2 15.09,8.26 22,9.27 17,14.14 18.18,21.02 12,17.77 5.82,21.02 7,14.14 2,9.27 8.91,8.26 12,2"/>
+                        </svg>
+                        Premium
+                    </div>
+                    <div class="badge badge-cutie">
+                        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/>
+                        </svg>
+                        Cutie
+                        <div class="tooltip">custom badge</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Bio Section -->
+            <div class="text-center mb-8 animate-fadeInUp animate-delay-300">
+                <p class="bio-text text-base">
+                    So I'm lost between the stages, I'm resenting the scripture now
+                    <br><br>
+                    i’m all his ~
+                </p>
+            </div>
+
+            <!-- Footer -->
+            <div class="text-center mt-8">
+                <p class="footer-text">// his cutie pie </p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Notification -->
+    <div id="notification" class="notification">
+        <button class="close-btn" onclick="closeNotification()">&times;</button>
+        <div class="notification-title">Want your own bio ?</div>
+        <div class="notification-text">Create your own adorable bio page! </div>
+        <div class="progress-bar" id="progressBar"></div>
+    </div>
+
+    <!-- Background Music -->
+    <audio id="backgroundMusic" loop>
+        <source src="33.mp3" type="audio/mpeg">
+        Your browser does not support the audio element.
+    </audio>
+
+    <script>
+        const music = document.getElementById('backgroundMusic');
+        music.volume = 0.2;
+        music.preload = 'auto';
+
+        let musicStarted = false;
+        function startMusic() {
+            if (!musicStarted) {
+                music.play().catch(e => console.log('Audio autoplay prevented'));
+                musicStarted = true;
+            }
+        }
+
+        music.load();
+        setTimeout(() => {
+            music.play().catch(() => {
+                document.addEventListener('click', startMusic, { once: true });
+                document.addEventListener('keydown', startMusic, { once: true });
+                document.addEventListener('touchstart', startMusic, { once: true });
+            });
+        }, 100);
+
+        let notificationTimeout;
+        let progressInterval;
+        let timeLeft = 8;
+        let totalTime = 8;
+
+        setTimeout(() => {
+            const notification = document.getElementById('notification');
+            const progressBar = document.getElementById('progressBar');
+            
+            notification.classList.add('show');
+            progressBar.style.width = '100%';
+            
+            progressInterval = setInterval(() => {
+                timeLeft -= 0.05;
+                const percentage = (timeLeft / totalTime) * 100;
+                progressBar.style.width = Math.max(0, percentage) + '%';
+                
+                if (timeLeft <= 0) {
+                    closeNotification();
+                }
+            }, 50);
+
+            notificationTimeout = setTimeout(() => {
+                closeNotification();
+            }, 8000);
+        }, 1000);
+
+        function closeNotification() {
+            const notification = document.getElementById('notification');
+            notification.classList.remove('show');
+            clearTimeout(notificationTimeout);
+            clearInterval(progressInterval);
+        }
+
+        document.getElementById('notification').addEventListener('click', (e) => {
+            if (e.target.classList.contains('close-btn')) return;
+            window.open('https://example.com', '_blank');
+        });
+
+        const profileImg = document.querySelector('.profile-img');
+        profileImg.addEventListener('mouseenter', () => {
+            profileImg.style.transform = 'scale(1.1) rotate(5deg)';
+        });
+        profileImg.addEventListener('mouseleave', () => {
+            profileImg.style.transform = 'scale(1) rotate(0deg)';
+        });
+
+        document.addEventListener('click', (e) => {
+            if (Math.random() > 0.8) {
+                createFloatingHeart(e.clientX, e.clientY);
+            }
+        });
+
+        function createFloatingHeart(x, y) {
+            const heart = document.createElement('div');
+            heart.innerHTML = '💜';
+            heart.style.position = 'fixed';
+            heart.style.left = x + 'px';
+            heart.style.top = y + 'px';
+            heart.style.fontSize = '16px';
+            heart.style.pointerEvents = 'none';
+            heart.style.zIndex = '9999';
+            heart.style.animation = 'floatUp 2s ease-out forwards';
+            
+            document.body.appendChild(heart);
+            
+            setTimeout(() => {
+                heart.remove();
+            }, 2000);
+        }
+
+        const style = document.createElement('style');
+        style.textContent = `
+            @keyframes floatUp {
+                0% { opacity: 1; transform: translateY(0px); }
+                100% { opacity: 0; transform: translateY(-100px); }
+            }
+        `;
+        document.head.appendChild(style);
+    </script>
+</body>
+</html>
