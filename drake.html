@@ -9,12 +9,14 @@
     button { background: #0f0; color: #000; padding: 5px; border: none; margin-top: 5px; cursor: pointer; }
     #chat { height: 300px; overflow-y: scroll; background: #000; padding: 5px; border: 1px solid #0f0; margin-bottom: 10px; }
     img.chat-image { max-width: 100%; max-height: 150px; margin-top: 5px; }
+    .info { font-size: 0.8em; color: #6f6; }
+    .ip-label { font-size: 0.75em; color: #999; }
+    .theme-btn { float: right; font-size: 0.8em; background: #333; color: #ccc; padding: 2px 6px; border: 1px solid #0f0; }
   </style>
 </head>
 <body>
 
-<h2>P2P Secure Chatroom</h2>
-
+<h2>P2P Secure Chatroom <button class="theme-btn" onclick="switchTheme()">Catbox Theme</button></h2>
 <div>
   <label>Session Key:</label>
   <input type="password" id="key">
@@ -33,10 +35,24 @@
   <button onclick="toggleHost()" id="hostToggle">Become Host</button>
 </div>
 
+<div class="info">
+  Your simulated IP: <span id="fakeIP"></span>
+</div>
+
 <script>
 let keyCache = null;
 let isHost = false;
 let joined = false;
+let userIP = '';
+
+function generateFakeIP() {
+  const base = localStorage.getItem('sharedFakeIP') || `192.168.${Math.floor(Math.random()*255)}.${Math.floor(Math.random()*255)}`;
+  localStorage.setItem('sharedFakeIP', base);
+  userIP = base;
+  document.getElementById("fakeIP").textContent = userIP;
+}
+
+generateFakeIP();
 
 async function deriveKey(pw) {
   const enc = new TextEncoder();
@@ -85,7 +101,13 @@ async function joinChat() {
   document.getElementById("imgInput").disabled = false;
   document.getElementById("sendImgBtn").disabled = false;
   joined = true;
-  displayMessage("System", "You have joined the chat.");
+  displayMessage("System", `You have joined the chat. Your IP: ${userIP}`);
+  displayInviteLink(keyStr);
+}
+
+function displayInviteLink(sessionKey) {
+  const url = `${location.origin}${location.pathname}?join=${btoa(sessionKey)}`;
+  displayMessage("Invite", `<a href='${url}' target='_blank'>Invite link</a>`);
 }
 
 async function sendMessage() {
@@ -161,6 +183,28 @@ function toggleHost() {
   document.getElementById("hostToggle").textContent = isHost ? "Revoke Host" : "Become Host";
   displayMessage("System", isHost ? "You are now the host." : "You are no longer the host.");
 }
+
+function switchTheme() {
+  document.body.style.background = "#2a2a2a";
+  document.body.style.color = "#f0f0f0";
+  const inputs = document.querySelectorAll("input, textarea, button");
+  inputs.forEach(el => {
+    el.style.background = "#444";
+    el.style.color = "#ddd";
+    el.style.border = "1px solid #ccc";
+  });
+  document.getElementById("chat").style.background = "#333";
+  document.getElementById("chat").style.border = "1px solid #ccc";
+}
+
+window.addEventListener("load", () => {
+  const urlParams = new URLSearchParams(window.location.search);
+  const joinKey = urlParams.get("join");
+  if (joinKey) {
+    document.getElementById("key").value = atob(joinKey);
+    joinChat();
+  }
+});
 </script>
 
 </body>
