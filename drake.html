@@ -6,8 +6,9 @@
   <style>
     body { background: #111; color: #0f0; font-family: monospace; padding: 10px; }
     textarea, input { width: 100%; background: #000; color: #0f0; border: 1px solid #0f0; margin: 5px 0; padding: 5px; }
-    button { background: #0f0; color: #000; padding: 5px; border: none; margin-top: 5px; }
+    button { background: #0f0; color: #000; padding: 5px; border: none; margin-top: 5px; cursor: pointer; }
     #chat { height: 300px; overflow-y: scroll; background: #000; padding: 5px; border: 1px solid #0f0; margin-bottom: 10px; }
+    img.chat-image { max-width: 100%; max-height: 150px; margin-top: 5px; }
   </style>
 </head>
 <body>
@@ -17,20 +18,25 @@
 <div>
   <label>Session Key:</label>
   <input type="password" id="key">
+  <button onclick="joinChat()">Join</button>
 </div>
 
 <div id="chat"></div>
 
-<textarea id="msg" placeholder="Type your message..."></textarea>
-<button onclick="sendMessage()">Send</button>
-<button onclick="nuke()">NUKE</button>
-<button onclick="toggleHost()" id="hostToggle">Become Host</button>
+<textarea id="msg" placeholder="Type your message..." disabled></textarea>
+<button onclick="sendMessage()" id="sendBtn" disabled>Send</button>
+<input type="file" id="imgInput" accept="image/*" disabled>
+<button onclick="sendImage()" id="sendImgBtn" disabled>Send Image</button>
+
+<div>
+  <button onclick="nuke()">NUKE</button>
+  <button onclick="toggleHost()" id="hostToggle">Become Host</button>
+</div>
 
 <script>
-let keyCache;
+let keyCache = null;
 let isHost = false;
-let chatLog = [];
-let peers = new Set();
+let joined = false;
 
 async function deriveKey(pw) {
   const enc = new TextEncoder();
@@ -70,15 +76,39 @@ async function decryptMessage(blob, key) {
   return new TextDecoder().decode(pt);
 }
 
+async function joinChat() {
+  const keyStr = document.getElementById("key").value;
+  if (!keyStr) return alert("Please enter a session key.");
+  keyCache = await deriveKey(keyStr);
+  document.getElementById("msg").disabled = false;
+  document.getElementById("sendBtn").disabled = false;
+  document.getElementById("imgInput").disabled = false;
+  document.getElementById("sendImgBtn").disabled = false;
+  joined = true;
+  displayMessage("System", "You have joined the chat.");
+}
+
 async function sendMessage() {
   const input = document.getElementById("msg");
-  const keyStr = document.getElementById("key").value;
-  if (!keyStr || !input.value) return;
-  if (!keyCache) keyCache = await deriveKey(keyStr);
+  if (!joined || !keyCache || !input.value) return;
   const encrypted = await encryptMessage(input.value, keyCache);
   displayMessage("You", input.value);
   input.value = "";
-  simulateP2PSend(encrypted);
+  simulateP2PSend(encrypted, 'text');
+}
+
+async function sendImage() {
+  const fileInput = document.getElementById("imgInput");
+  if (!joined || !keyCache || fileInput.files.length === 0) return;
+  const reader = new FileReader();
+  reader.onload = async () => {
+    const base64Image = reader.result;
+    const encrypted = await encryptMessage("[img]" + base64Image, keyCache);
+    displayImage("You", base64Image);
+    simulateP2PSend(encrypted, 'image');
+  };
+  reader.readAsDataURL(fileInput.files[0]);
+  fileInput.value = "";
 }
 
 function displayMessage(user, text) {
@@ -87,33 +117,51 @@ function displayMessage(user, text) {
   chat.scrollTop = chat.scrollHeight;
 }
 
-function simulateP2PSend(encrypted) {
+function displayImage(user, base64) {
+  const chat = document.getElementById("chat");
+  chat.innerHTML += `<div><b>${user}:</b><br><img src="${base64}" class="chat-image"></div>`;
+  chat.scrollTop = chat.scrollHeight;
+}
+
+function simulateP2PSend(encrypted, type) {
   setTimeout(async () => {
     if (!keyCache) return;
-    const fakeTraffic = Math.random() < 0.3;
+    const fakeTraffic = Math.random() < 0.2;
     if (fakeTraffic) {
       displayMessage("Dummy", "<noise>");
       return;
     }
     try {
       const decrypted = await decryptMessage(encrypted, keyCache);
-      displayMessage("Peer", decrypted);
-    } catch {}
+      if (decrypted.startsWith("[img]")) {
+        displayImage("Peer", decrypted.slice(5));
+      } else {
+        displayMessage("Peer", decrypted);
+      }
+    } catch (e) {
+      displayMessage("Error", "Decryption failed.");
+    }
   }, Math.random() * 1000);
 }
 
 function nuke() {
   keyCache = null;
+  joined = false;
   document.getElementById("key").value = "";
   document.getElementById("msg").value = "";
   document.getElementById("chat").innerHTML = "<i>Chat nuked</i><br>";
+  document.getElementById("msg").disabled = true;
+  document.getElementById("sendBtn").disabled = true;
+  document.getElementById("imgInput").disabled = true;
+  document.getElementById("sendImgBtn").disabled = true;
 }
 
 function toggleHost() {
   isHost = !isHost;
   document.getElementById("hostToggle").textContent = isHost ? "Revoke Host" : "Become Host";
-  displayMessage("System", isHost ? "You are now the host" : "You are no longer the host");
+  displayMessage("System", isHost ? "You are now the host." : "You are no longer the host.");
 }
 </script>
+
 </body>
 </html>
