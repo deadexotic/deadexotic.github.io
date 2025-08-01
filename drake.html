@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Secure P2P Chatroom</title>
+  <style>
+    body { background: #111; color: #0f0; font-family: monospace; padding: 10px; }
+    textarea, input { width: 100%; background: #000; color: #0f0; border: 1px solid #0f0; margin: 5px 0; padding: 5px; }
+    button { background: #0f0; color: #000; padding: 5px; border: none; margin-top: 5px; }
+    #chat { height: 300px; overflow-y: scroll; background: #000; padding: 5px; border: 1px solid #0f0; margin-bottom: 10px; }
+  </style>
+</head>
+<body>
+
+<h2>P2P Secure Chatroom</h2>
+
+<div>
+  <label>Session Key:</label>
+  <input type="password" id="key">
+</div>
+
+<div id="chat"></div>
+
+<textarea id="msg" placeholder="Type your message..."></textarea>
+<button onclick="sendMessage()">Send</button>
+<button onclick="nuke()">NUKE</button>
+<button onclick="toggleHost()" id="hostToggle">Become Host</button>
+
+<script>
+let keyCache;
+let isHost = false;
+let chatLog = [];
+let peers = new Set();
+
+async function deriveKey(pw) {
+  const enc = new TextEncoder();
+  const baseKey = await crypto.subtle.importKey(
+    "raw", enc.encode(pw), "PBKDF2", false, ["deriveKey"]
+  );
+  return crypto.subtle.deriveKey(
+    {
+      name: "PBKDF2",
+      salt: enc.encode("secureChatRoom"),
+      iterations: 100000,
+      hash: "SHA-256"
+    },
+    baseKey,
+    { name: "AES-GCM", length: 256 },
+    false,
+    ["encrypt", "decrypt"]
+  );
+}
+
+async function encryptMessage(msg, key) {
+  const enc = new TextEncoder();
+  const iv = crypto.getRandomValues(new Uint8Array(12));
+  const ct = await crypto.subtle.encrypt(
+    { name: "AES-GCM", iv: iv }, key, enc.encode(msg)
+  );
+  return btoa([...iv, ...new Uint8Array(ct)].map(b => String.fromCharCode(b)).join(""));
+}
+
+async function decryptMessage(blob, key) {
+  const raw = Uint8Array.from(atob(blob), c => c.charCodeAt(0));
+  const iv = raw.slice(0, 12);
+  const ct = raw.slice(12);
+  const pt = await crypto.subtle.decrypt(
+    { name: "AES-GCM", iv: iv }, key, ct
+  );
+  return new TextDecoder().decode(pt);
+}
+
+async function sendMessage() {
+  const input = document.getElementById("msg");
+  const keyStr = document.getElementById("key").value;
+  if (!keyStr || !input.value) return;
+  if (!keyCache) keyCache = await deriveKey(keyStr);
+  const encrypted = await encryptMessage(input.value, keyCache);
+  displayMessage("You", input.value);
+  input.value = "";
+  simulateP2PSend(encrypted);
+}
+
+function displayMessage(user, text) {
+  const chat = document.getElementById("chat");
+  chat.innerHTML += `<div><b>${user}:</b> ${text}</div>`;
+  chat.scrollTop = chat.scrollHeight;
+}
+
+function simulateP2PSend(encrypted) {
+  setTimeout(async () => {
+    if (!keyCache) return;
+    const fakeTraffic = Math.random() < 0.3;
+    if (fakeTraffic) {
+      displayMessage("Dummy", "<noise>");
+      return;
+    }
+    try {
+      const decrypted = await decryptMessage(encrypted, keyCache);
+      displayMessage("Peer", decrypted);
+    } catch {}
+  }, Math.random() * 1000);
+}
+
+function nuke() {
+  keyCache = null;
+  document.getElementById("key").value = "";
+  document.getElementById("msg").value = "";
+  document.getElementById("chat").innerHTML = "<i>Chat nuked</i><br>";
+}
+
+function toggleHost() {
+  isHost = !isHost;
+  document.getElementById("hostToggle").textContent = isHost ? "Revoke Host" : "Become Host";
+  displayMessage("System", isHost ? "You are now the host" : "You are no longer the host");
+}
+</script>
+</body>
+</html>
