@@ -1,8 +1,6 @@
-https://realkeshav.tech/
+https://die.skin/
 false
-100
-2310
-http,slowloris,uam_bypass
-61
-5
-2451
+5000
+1024
+spam,http
+true
