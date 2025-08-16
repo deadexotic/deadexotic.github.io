@@ -1,8 +1,8 @@
 https://realkeshav.tech/
-BYPASS_UAM: false
-CONNECTIONS: 1000
-PAYLOAD_SIZE_KB: 1028
-ATTACK_METHODS: http,slowloris,context7,uam_bypass
-TIMEOUT: 41
-MAX_RETRIES: 5
-REQUEST_DELAY: 1200
+false
+1000
+1028
+http,slowloris,context7,uam_bypass
+41
+5
+1200
