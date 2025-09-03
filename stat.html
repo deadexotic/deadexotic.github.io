@@ -260,7 +260,7 @@
             });
         }
 
-        // Fetch data from dstat.space API
+        // Fetch data using multiple approaches
         async function fetchData() {
             const statusIndicator = document.getElementById('statusIndicator');
             const dataDisplay = document.getElementById('dataDisplay');
@@ -271,54 +271,189 @@
                 statusIndicator.textContent = '🔄 Fetching data...';
                 refreshBtn.disabled = true;
                 
-                // Mimic the browser request headers to avoid blocking
-                const response = await fetch(API_URL, {
+                // Method 1: Try direct API with dstat.space referer
+                try {
+                    statusIndicator.textContent = '🔄 Trying direct API...';
+                    const apiResponse = await fetch(API_URL, {
+                        method: 'GET',
+                        headers: {
+                            'Accept': '*/*',
+                            'Accept-Language': 'en-US,en;q=0.9',
+                            'DNT': '1',
+                            'Referer': 'https://dstat.space/l7?id=fdsservers-1',
+                            'Sec-Ch-Ua': '"Not;A=Brand";v="99", "Brave";v="139", "Chromium";v="139"',
+                            'Sec-Ch-Ua-Mobile': '?0',
+                            'Sec-Ch-Ua-Platform': '"Windows"',
+                            'Sec-Fetch-Dest': 'empty',
+                            'Sec-Fetch-Mode': 'cors',
+                            'Sec-Fetch-Site': 'same-origin',
+                            'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/139.0.0.0 Safari/537.36'
+                        },
+                        mode: 'cors'
+                    });
+
+                    if (apiResponse.ok) {
+                        const data = await apiResponse.json();
+                        statusIndicator.className = 'status-indicator status-success';
+                        statusIndicator.innerHTML = '✅ Data loaded successfully (Direct API)';
+                        dataDisplay.innerHTML = `<pre>${JSON.stringify(data, null, 2)}</pre>`;
+                        return;
+                    }
+                } catch (apiError) {
+                    console.log('Direct API failed:', apiError.message);
+                }
+                
+                // Method 2: Fetch the page and look for embedded data
+                statusIndicator.textContent = '🔄 Fetching page content...';
+                
+                const pageResponse = await fetch('https://dstat.space/l7?id=fdsservers-1', {
                     method: 'GET',
                     headers: {
-                        'Accept': '*/*',
-
+                        'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8',
                         'Accept-Language': 'en-US,en;q=0.9',
                         'DNT': '1',
-                        'Referer': 'https://die.skin/',
                         'Sec-Ch-Ua': '"Not;A=Brand";v="99", "Brave";v="139", "Chromium";v="139"',
                         'Sec-Ch-Ua-Mobile': '?0',
                         'Sec-Ch-Ua-Platform': '"Windows"',
-
-
-
+                        'Sec-Fetch-Dest': 'document',
+                        'Sec-Fetch-Mode': 'navigate',
+                        'Sec-Fetch-Site': 'none',
+                        'Sec-Fetch-User': '?1',
+                        'Upgrade-Insecure-Requests': '1',
                         'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/139.0.0.0 Safari/537.36'
                     },
                     mode: 'cors'
                 });
 
-                if (!response.ok) {
-                    throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+                if (!pageResponse.ok) {
+                    throw new Error(`Page request failed: HTTP ${pageResponse.status}`);
                 }
 
-                const data = await response.json();
+                const pageContent = await pageResponse.text();
                 
+                // Method 3: Create an iframe to load the page and extract data
+                statusIndicator.textContent = '🔄 Analyzing page content...';
+                
+                // Look for JavaScript that might contain the data or API calls
+                const scriptMatches = pageContent.match(/<script[^>]*>([\s\S]*?)<\/script>/gi) || [];
+                let foundData = null;
+                
+                for (const script of scriptMatches) {
+                    // Look for API calls
+                    const apiCallMatch = script.match(/fetch\s*\(\s*['"`]([^'"`]*api[^'"`]*fdsservers[^'"`]*)['"`]/i);
+                    if (apiCallMatch) {
+                        try {
+                            const fullApiUrl = apiCallMatch[1].startsWith('http') ? apiCallMatch[1] : 'https://dstat.space' + apiCallMatch[1];
+                            statusIndicator.textContent = '🔄 Found API call, trying...';
+                            
+                            const extractedResponse = await fetch(fullApiUrl, {
+                                method: 'GET',
+                                headers: {
+                                    'Accept': '*/*',
+                                    'Referer': 'https://dstat.space/l7?id=fdsservers-1',
+                                    'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/139.0.0.0 Safari/537.36'
+                                }
+                            });
+                            
+                            if (extractedResponse.ok) {
+                                foundData = await extractedResponse.json();
+                                break;
+                            }
+                        } catch (e) {
+                            console.log('Extracted API call failed:', e.message);
+                        }
+                    }
+                    
+                    // Look for embedded JSON data
+                    const jsonMatches = script.match(/(?:data|response|result|stats)\s*[:=]\s*(\{[^}]+\})/gi);
+                    if (jsonMatches) {
+                        for (const match of jsonMatches) {
+                            try {
+                                const jsonPart = match.match(/(\{[^}]+\})/)[1];
+                                const parsed = JSON.parse(jsonPart);
+                                if (parsed && Object.keys(parsed).length > 2) {
+                                    foundData = parsed;
+                                    break;
+                                }
+                            } catch (e) {
+                                continue;
+                            }
+                        }
+                        if (foundData) break;
+                    }
+                }
+                
+                if (foundData) {
+                    statusIndicator.className = 'status-indicator status-success';
+                    statusIndicator.innerHTML = '✅ Data extracted from page';
+                    dataDisplay.innerHTML = `<pre>${JSON.stringify(foundData, null, 2)}</pre>`;
+                    return;
+                }
+                
+                // Method 4: Show page structure for analysis
                 statusIndicator.className = 'status-indicator status-success';
-                statusIndicator.innerHTML = '✅ Data loaded successfully';
+                statusIndicator.innerHTML = '📄 Page loaded - analyzing structure';
                 
-                // Format and display the JSON data
-                dataDisplay.innerHTML = `<pre>${JSON.stringify(data, null, 2)}</pre>`;
+                const bodyMatch = pageContent.match(/<body[^>]*>([\s\S]*?)<\/body>/i);
+                const bodyContent = bodyMatch ? bodyMatch[1] : pageContent;
+                
+                // Extract meaningful content
+                const cleanContent = bodyContent
+                    .replace(/<script[\s\S]*?<\/script>/gi, '[SCRIPT REMOVED]')
+                    .replace(/<style[\s\S]*?<\/style>/gi, '[STYLE REMOVED]')
+                    .replace(/<!--[\s\S]*?-->/g, '')
+                    .replace(/\s+/g, ' ')
+                    .trim();
+                
+                dataDisplay.innerHTML = `
+                    <div style="color: #2c3e50;">
+                        <strong>🔍 Page Analysis Results:</strong><br><br>
+                        <div style="background: #f8f9fa; padding: 15px; border-radius: 8px; margin: 10px 0;">
+                            <strong>Page URL:</strong> https://dstat.space/l7?id=fdsservers-1<br>
+                            <strong>Status:</strong> ${pageResponse.status} ${pageResponse.statusText}<br>
+                            <strong>Content Length:</strong> ${pageContent.length} characters
+                        </div>
+                        
+                        <details style="margin: 10px 0;">
+                            <summary style="cursor: pointer; font-weight: bold;">📋 Page Content (Click to expand)</summary>
+                            <div style="max-height: 400px; overflow-y: auto; background: #f8f9fa; padding: 10px; margin-top: 10px; border-radius: 5px; font-size: 0.8rem; font-family: monospace;">
+                                ${cleanContent.replace(/</g, '&lt;').replace(/>/g, '&gt;').substring(0, 3000)}
+                                ${cleanContent.length > 3000 ? '...\n\n[Content truncated - expand to see more]' : ''}
+                            </div>
+                        </details>
+                        
+                        <div style="background: #e3f2fd; padding: 10px; border-radius: 5px; margin-top: 10px; font-size: 0.9rem;">
+                            💡 <strong>Next Steps:</strong> The page loaded successfully but no API data was found. 
+                            The site may use dynamic loading or require authentication.
+                        </div>
+                    </div>
+                `;
                 
             } catch (error) {
-                console.error('Error fetching data:', error);
+                console.error('All methods failed:', error);
                 statusIndicator.className = 'status-indicator status-error';
-                statusIndicator.innerHTML = '❌ Failed to load data';
+                statusIndicator.innerHTML = '❌ All methods failed';
                 
-                dataDisplay.innerHTML = `<div style="color: #e74c3c; font-weight: bold;">
-                    Error: ${error.message}
-                    <br><br>
-                    <div style="color: #7f8c8d; font-size: 0.9em;">
-                        This might be due to CORS restrictions or API blocking. 
-                        <br>The API expects requests from correct domain.
+                dataDisplay.innerHTML = `
+                    <div style="color: #e74c3c; font-weight: bold;">
+                        ❌ Error: ${error.message}
                         <br><br>
-                        Attempted to fetch from: ${API_URL}
-                        <br>With referer: ${REFERER_URL}
+                        <div style="color: #7f8c8d; font-size: 0.9em;">
+                            <strong>Attempted Methods:</strong><br>
+                            1. ✗ Direct API call to: ${API_URL}<br>
+                            2. ✗ Page fetch from: https://dstat.space/l7?id=fdsservers-1<br>
+                            3. ✗ Content analysis and data extraction<br><br>
+                            
+                            <strong>Possible Issues:</strong><br>
+                            • CORS restrictions blocking cross-origin requests<br>
+                            • API requires specific authentication or tokens<br>
+                            • Site uses dynamic JavaScript loading<br>
+                            • Rate limiting or IP blocking<br><br>
+                            
+                            <em>The site may require running from the same domain or using a proxy server.</em>
+                        </div>
                     </div>
-                </div>`;
+                `;
             } finally {
                 refreshBtn.disabled = false;
             }
@@ -326,7 +461,7 @@
 
         // Auto-refresh functionality
         function startAutoRefresh() {
-            refreshInterval = setInterval(fetchData, 1000); // Refresh every 30 seconds
+            refreshInterval = setInterval(fetchData, 30000); // Refresh every 30 seconds
         }
 
         function stopAutoRefresh() {
