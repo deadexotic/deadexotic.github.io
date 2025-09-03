@@ -1,0 +1,355 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DStat Monitor</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 20px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+            padding: 30px;
+            backdrop-filter: blur(10px);
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .header h1 {
+            color: #2c3e50;
+            font-size: 2.5rem;
+            font-weight: 700;
+            margin-bottom: 10px;
+        }
+
+        .header p {
+            color: #7f8c8d;
+            font-size: 1.1rem;
+        }
+
+        .ip-section {
+            background: #f8f9fa;
+            border-radius: 15px;
+            padding: 20px;
+            margin-bottom: 30px;
+            border: 2px solid #e9ecef;
+        }
+
+        .ip-container {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 15px;
+            flex-wrap: wrap;
+        }
+
+        .ip-display {
+            background: #2c3e50;
+            color: white;
+            padding: 12px 20px;
+            border-radius: 10px;
+            font-family: 'Courier New', monospace;
+            font-size: 1.2rem;
+            font-weight: bold;
+            user-select: all;
+        }
+
+        .copy-btn {
+            background: #3498db;
+            color: white;
+            border: none;
+            padding: 12px 20px;
+            border-radius: 10px;
+            cursor: pointer;
+            font-size: 1rem;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+
+        .copy-btn:hover {
+            background: #2980b9;
+            transform: translateY(-2px);
+        }
+
+        .copy-btn.copied {
+            background: #27ae60;
+        }
+
+        .data-section {
+            background: #ffffff;
+            border-radius: 15px;
+            padding: 25px;
+            border: 2px solid #e9ecef;
+            margin-bottom: 20px;
+        }
+
+        .data-section h2 {
+            color: #2c3e50;
+            margin-bottom: 20px;
+            font-size: 1.5rem;
+        }
+
+        .status-indicator {
+            display: inline-block;
+            padding: 5px 12px;
+            border-radius: 20px;
+            font-size: 0.9rem;
+            font-weight: 600;
+            margin-bottom: 15px;
+        }
+
+        .status-loading {
+            background: #f39c12;
+            color: white;
+        }
+
+        .status-success {
+            background: #27ae60;
+            color: white;
+        }
+
+        .status-error {
+            background: #e74c3c;
+            color: white;
+        }
+
+        .data-display {
+            background: #f8f9fa;
+            border-radius: 10px;
+            padding: 20px;
+            font-family: 'Courier New', monospace;
+            font-size: 0.9rem;
+            line-height: 1.5;
+            max-height: 400px;
+            overflow-y: auto;
+            border: 1px solid #dee2e6;
+        }
+
+        .refresh-btn {
+            background: #8e44ad;
+            color: white;
+            border: none;
+            padding: 12px 25px;
+            border-radius: 10px;
+            cursor: pointer;
+            font-size: 1rem;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            margin-top: 15px;
+        }
+
+        .refresh-btn:hover {
+            background: #7d3c98;
+            transform: translateY(-2px);
+        }
+
+        .refresh-btn:disabled {
+            background: #bdc3c7;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .footer {
+            text-align: center;
+            color: #7f8c8d;
+            font-size: 0.9rem;
+            margin-top: 20px;
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                padding: 20px;
+            }
+            
+            .header h1 {
+                font-size: 2rem;
+            }
+            
+            .ip-container {
+                flex-direction: column;
+            }
+            
+            .ip-display {
+                font-size: 1rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🔍 DStat Monitor</h1>
+            <p>Real-time server statistics from die.skin</p>
+        </div>
+
+        <div class="ip-section">
+            <div class="ip-container">
+                <div class="ip-display" id="ipDisplay">http://50.7.24.50</div>
+                <button class="copy-btn" id="copyBtn" onclick="copyIP()">📋 Copy IP</button>
+            </div>
+        </div>
+
+        <div class="data-section">
+            <h2>📊 Server Data (fdsservers-1)</h2>
+            <div class="status-indicator status-loading" id="statusIndicator">🔄 Loading...</div>
+            <div class="data-display" id="dataDisplay">Initializing connection...</div>
+            <button class="refresh-btn" id="refreshBtn" onclick="fetchData()">🔄 Refresh Data</button>
+        </div>
+
+        <div class="footer">
+            <p>Data sourced from die.skin API • Auto-refreshes every 30 seconds</p>
+        </div>
+    </div>
+
+    <script>
+        const API_URL = 'https://dstat.space/api/layer7/fdsservers-1';
+        const REFERER_URL = 'https://dstat.space/l7?id=fdsservers-1';
+        
+        let refreshInterval;
+
+        // Copy IP functionality
+        function copyIP() {
+            const ipText = document.getElementById('ipDisplay').textContent;
+            navigator.clipboard.writeText(ipText).then(() => {
+                const copyBtn = document.getElementById('copyBtn');
+                const originalText = copyBtn.innerHTML;
+                copyBtn.innerHTML = '✅ Copied!';
+                copyBtn.classList.add('copied');
+                
+                setTimeout(() => {
+                    copyBtn.innerHTML = originalText;
+                    copyBtn.classList.remove('copied');
+                }, 2000);
+            }).catch(err => {
+                console.error('Failed to copy: ', err);
+                // Fallback for older browsers
+                const textArea = document.createElement('textarea');
+                textArea.value = ipText;
+                document.body.appendChild(textArea);
+                textArea.select();
+                document.execCommand('copy');
+                document.body.removeChild(textArea);
+                
+                const copyBtn = document.getElementById('copyBtn');
+                const originalText = copyBtn.innerHTML;
+                copyBtn.innerHTML = '✅ Copied!';
+                copyBtn.classList.add('copied');
+                
+                setTimeout(() => {
+                    copyBtn.innerHTML = originalText;
+                    copyBtn.classList.remove('copied');
+                }, 2000);
+            });
+        }
+
+        // Fetch data from dstat.space API
+        async function fetchData() {
+            const statusIndicator = document.getElementById('statusIndicator');
+            const dataDisplay = document.getElementById('dataDisplay');
+            const refreshBtn = document.getElementById('refreshBtn');
+            
+            try {
+                statusIndicator.className = 'status-indicator status-loading';
+                statusIndicator.textContent = '🔄 Fetching data...';
+                refreshBtn.disabled = true;
+                
+                // Mimic the browser request headers to avoid blocking
+                const response = await fetch(API_URL, {
+                    method: 'GET',
+                    headers: {
+                        'Accept': '*/*',
+                        'Accept-Encoding': 'gzip, deflate, br, zstd',
+                        'Accept-Language': 'en-US,en;q=0.9',
+                        'DNT': '1',
+                        'Referer': REFERER_URL,
+                        'Sec-Ch-Ua': '"Not;A=Brand";v="99", "Microsoft Edge";v="139", "Chromium";v="139"',
+                        'Sec-Ch-Ua-Mobile': '?0',
+                        'Sec-Ch-Ua-Platform': '"Windows"',
+                        'Sec-Fetch-Dest': 'empty',
+                        'Sec-Fetch-Mode': 'cors',
+                        'Sec-Fetch-Site': 'same-origin',
+                        'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/139.0.0.0 Safari/537.36 Edg/139.0.0.0'
+                    },
+                    mode: 'cors',
+                    credentials: 'include'
+                });
+
+                if (!response.ok) {
+                    throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+                }
+
+                const data = await response.json();
+                
+                statusIndicator.className = 'status-indicator status-success';
+                statusIndicator.innerHTML = '✅ Data loaded successfully';
+                
+                // Format and display the JSON data
+                dataDisplay.innerHTML = `<pre>${JSON.stringify(data, null, 2)}</pre>`;
+                
+            } catch (error) {
+                console.error('Error fetching data:', error);
+                statusIndicator.className = 'status-indicator status-error';
+                statusIndicator.innerHTML = '❌ Failed to load data';
+                
+                dataDisplay.innerHTML = `<div style="color: #e74c3c; font-weight: bold;">
+                    Error: ${error.message}
+                    <br><br>
+                    <div style="color: #7f8c8d; font-size: 0.9em;">
+                        This might be due to CORS restrictions or API blocking. 
+                        <br>The API expects requests from correct domain.
+                        <br><br>
+                        Attempted to fetch from: ${API_URL}
+                        <br>With referer: ${REFERER_URL}
+                    </div>
+                </div>`;
+            } finally {
+                refreshBtn.disabled = false;
+            }
+        }
+
+        // Auto-refresh functionality
+        function startAutoRefresh() {
+            refreshInterval = setInterval(fetchData, 1); // Refresh every 30 seconds
+        }
+
+        function stopAutoRefresh() {
+            if (refreshInterval) {
+                clearInterval(refreshInterval);
+            }
+        }
+
+        // Initialize on page load
+        document.addEventListener('DOMContentLoaded', () => {
+            fetchData();
+            startAutoRefresh();
+        });
+
+        // Stop auto-refresh when page is hidden (battery saving)
+        document.addEventListener('visibilitychange', () => {
+            if (document.hidden) {
+                stopAutoRefresh();
+            } else {
+                startAutoRefresh();
+            }
+        });
+    </script>
+</body>
+</html>
