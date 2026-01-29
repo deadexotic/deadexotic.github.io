@@ -4,3 +4,5 @@ vless://ok@aaabbbccc.cfd:8080?type=tcp&encryption=none&security=reality&pbk=uqoW
 vmess://ewogICJ2IjogIjIiLAogICJwcyI6ICJvazMiLAogICJhZGQiOiAiYWFhYmJiY2NjLmNmZCIsCiAgInBvcnQiOiA1MjEyNSwKICAiaWQiOiAib2siLAogICJzY3kiOiAiYXV0byIsCiAgIm5ldCI6ICJ4aHR0cCIsCiAgInRscyI6ICJub25lIiwKICAicGF0aCI6ICIvIiwKICAiaG9zdCI6ICJhYWFiYmJiY2NjLmNmZCIsCiAgInR5cGUiOiAiYXV0byIKfQ==
 ss://MjAyMi1ibGFrZTMtYWVzLTI1Ni1nY206NXFDdFJOOEhic3R0Y0FWVWtPblBoTndlTFFZQlArc3BqRUJPWW9zQVJ6ST06YXdiTG9vZ0JhWUFtUGhLSGRNNFIyMWNzNVdNUGN0VUx6c2Z0UEdpQ0RwYz0@aaabbbccc.cfd:50458?type=tcp#z1yggbct
 vless://ok@aaabbbccc.cfd:8088?type=ws&encryption=mlkem768x25519plus.native.0rtt.9S29_M3KOWPClN1fOfnDAYANvpoROnCP8CFe8-mVUxM&path=%2F&host=&security=none#ok5
+vless://93cfe81b-96c7-4b94-b82f-511102ace356@aaabbbccc.cfd:35473?type=httpupgrade&encryption=mlkem768x25519plus.native.0rtt.kSNs7dhWh33V6ZrR_54pTy816pgDYtj3AQYgtT_H0l4&path=%2F&host=khamenei.ir&security=none#g4v7bzfe
+vless://36357d19-1d2c-41af-85f9-d4955805b36b@aaabbbccc.cfd:65535?type=tcp&encryption=none&path=%2F&headerType=http&security=none#dsl9k2n8
